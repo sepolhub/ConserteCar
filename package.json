@@ -1,0 +1,29 @@
+{
+  "name": "consertecar",
+  "version": "1.0.0",
+  "description": "Projeto Integrador Senac: Plataforma de auto ajuda veicular.",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sepolhub/ConserteCar.git"
+  },
+  "keywords": [
+    "consertecar",
+    "automovel",
+    "mecanica",
+    "senac",
+    "projeto-integrador"
+  ],
+  "author": "nathan, marcos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sepolhub/ConserteCar/issues"
+  },
+  "homepage": "https://github.com/sepolhub/ConserteCar#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
