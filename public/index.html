@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConserteCar - Seu Guia de Auto Ajuda Veicular</title>
+    <link rel="stylesheet" href="css/bootstrap-cosmo.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    </head>
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="/" class="logo text-decoration-none">ConserteCar</a>
+            <nav class="main-nav">
+                <ul class="nav-list list-unstyled"> <li><a href="#servicos" class="nav-link text-white">Serviços</a></li>
+                    <li><a href="#dicas" class="nav-link text-white">Dicas</a></li>
+                    <li><a href="#contato" class="nav-link text-white">Contato</a></li>
+                    <li><a href="/login" class="nav-link btn btn-outline-primary ms-md-2">Login</a></li> <li><a href="/cadastro" class="nav-link btn btn-primary mt-2 mt-md-0">Cadastre-se</a></li> </ul>
+                <button class="menu-toggle d-md-none" aria-label="Abrir Menu">&#9776;</button> </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section d-flex align-items-center justify-content-center text-center text-white">
+            <div class="container hero-content">
+                <h1 class="display-4 fw-bold">Problemas com seu Veículo? Nós Ajudamos!</h1> <p class="lead mb-4">Encontre mecânicas próximas, solicite serviços, obtenha dicas e muito mais.</p> <div class="hero-buttons d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"> <a href="#localizar-mecanica" class="btn btn-primary btn-lg">Localizar Mecânica</a> <button class="btn btn-danger btn-lg" onclick="chamarGuincho()">Chamar Guincho</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="servicos" class="section-padding bg-light"> <div class="container">
+                <h2 class="section-title text-dark mb-5">Nossos Serviços</h2> <div class="row g-4"> <div class="col-md-6 col-lg-3"> <div class="card h-100 shadow-sm"> <div class="card-body text-center">
+                                <h3 class="card-title text-primary">Mecânicas Próximas</h3>
+                                <p class="card-text text-secondary">Encontre oficinas e mecânicos avaliados perto de você.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title text-primary">Serviços por Categoria</h3>
+                                <p class="card-text text-secondary">Filtre por troca de pneu, bateria, revisão, funilaria e outros.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title text-primary">Acionar Seguro</h3>
+                                <p class="card-text text-secondary">Conecte-se rapidamente com sua seguradora em caso de imprevistos.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title text-primary">Guincho Rápido</h3>
+                                <p class="card-text text-secondary">Solicite um guincho parceiro em emergências, mesmo sem seguro.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dicas" class="section-padding bg-white"> <div class="container">
+                <h2 class="section-title text-dark mb-5">Dicas e Conteúdo</h2>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary">Manutenção Essencial</h3>
+                                <p class="card-text">Como verificar o nível do óleo e da água do radiador.</p>
+                                <a href="#" class="btn btn-link text-primary p-0">Leia mais</a> </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary">Sinais de Alerta</h3>
+                                <p class="card-text">Conheça os sons e luzes que indicam problemas no carro.</p>
+                                <a href="#" class="btn btn-link text-primary p-0">Leia mais</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary">Vídeo Aula: Pneu Furado</h3>
+                                <p class="card-text">Assista e aprenda a trocar um pneu de forma segura.</p>
+                                <a href="#" class="btn btn-link text-primary p-0">Assista agora</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary">Promoções de Peças</h3>
+                                <p class="card-text">Descubra grupos e blogs com as melhores ofertas para seu veículo.</p>
+                                <a href="#" class="btn btn-link text-primary p-0">Ver indicações</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="section-padding bg-light">
+            <div class="container">
+                <h2 class="section-title text-dark mb-5">Entre em Contato</h2>
+                <p class="section-description text-secondary">Tem alguma dúvida ou sugestão? Fale conosco!</p>
+                <form class="contact-form p-4 border rounded shadow-sm bg-white"> <div class="mb-3">
+                        <input type="text" class="form-control" id="contactName" placeholder="Seu Nome Completo" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="contactEmail" placeholder="Seu Melhor E-mail" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="contactMessage" placeholder="Sua Mensagem..." rows="6" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary align-self-end">Enviar Mensagem</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer text-white py-4"> <div class="container footer-content d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <p class="mb-2 mb-md-0">&copy; 2025 ConserteCar. Todos os direitos reservados.</p>
+            <div class="social-links d-flex gap-3">
+                <a href="#" aria-label="Facebook"><img src="images/icon-facebook.svg" alt="Facebook"></a>
+                <a href="#" aria-label="Instagram"><img src="images/icon-instagram.svg" alt="Instagram"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Função de exemplo para o botão de guincho
+        function chamarGuincho() {
+            alert('Chamada de guincho em andamento! Por favor, aguarde o contato.');
+        }
+
+        // Script para o menu responsivo (menu-toggle)
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navList = document.querySelector('.nav-list');
+
+            if (menuToggle && navList) { // Verifica se os elementos existem antes de adicionar o listener
+                menuToggle.addEventListener('click', () => {
+                    navList.classList.toggle('active');
+                });
+
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (navList.classList.contains('active')) {
+                            navList.classList.remove('active');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

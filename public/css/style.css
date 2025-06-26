@@ -1,0 +1,162 @@
+/* Importação de fonte do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+/* Variáveis CSS para customização */
+:root {
+    --consertecar-primary: var(--bs-primary); /* Usará o azul primário do Cosmo */
+    --consertecar-dark-bg: var(--bs-dark);    /* Usará o cinza escuro do Cosmo */
+    /* Você pode adicionar outras variáveis customizadas aqui se precisar de cores ou tamanhos específicos */
+}
+
+/* Estilos globais (apenas o necessário, o Bootstrap já lida com o resto) */
+body {
+    font-family: 'Roboto', sans-serif; /* Garante que Roboto seja usada */
+    line-height: 1.6;
+    color: var(--bs-body-color); /* Cor de texto padrão do Bootstrap */
+    background-color: var(--bs-light); /* Cor de fundo padrão do Bootstrap */
+}
+
+/* Suas classes de utilidade customizadas */
+.section-padding {
+    padding: 60px 0; /* Padding vertical padrão para seções */
+}
+
+/* Header */
+.main-header {
+    background-color: var(--consertecar-dark-bg);
+    padding: 20px 0; /* Bootstrap tem classes de padding (p-x, py-x), mas pode manter esta se preferir */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    /* Mantenha o flexbox para alinhar logo e nav */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--consertecar-primary); /* Cor do logo */
+}
+
+/* Navegação (Menu Mobile/Hambúrguer - ESTILO CUSTOMIZADO) */
+/* Este é o estilo para o menu que aparece quando o hambúrguer é clicado */
+.main-nav .nav-list {
+    display: none; /* Escondido por padrão no mobile */
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%; /* Posiciona abaixo do header */
+    left: 0;
+    background-color: var(--consertecar-dark-bg); /* Fundo do menu mobile */
+    padding: 20px 0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    list-style: none; /* Garante que não tenha bullets */
+    margin: 0;
+}
+
+.main-nav .nav-list.active {
+    display: flex; /* Mostra o menu quando a classe 'active' é adicionada pelo JS */
+}
+
+.main-nav .nav-list li {
+    text-align: center;
+    margin: 10px 0;
+}
+
+/* Links dentro do menu mobile */
+.main-nav .nav-list .nav-link {
+    display: block;
+    padding: 10px 0;
+    color: var(--bs-white); /* Cor dos links do menu mobile */
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+
+.main-nav .nav-list .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.menu-toggle {
+    /* Estilo do ícone hambúrguer */
+    background: none;
+    border: none;
+    color: var(--bs-white); /* Cor branca para o ícone */
+    font-size: 2rem;
+    cursor: pointer;
+    /* `d-md-none` no HTML esconde ele em desktop */
+}
+
+/* Hero Section (Customizada pela imagem de fundo) */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/hero-bg.jpg') no-repeat center center/cover;
+    /* Ajuste o '600px' ou '550px' conforme a altura desejada */
+    min-height: 550px; 
+}
+
+/* Footer */
+.main-footer {
+    background-color: var(--consertecar-dark-bg); /* Fundo do rodapé */
+    color: var(--bs-white); /* Cor do texto do rodapé */
+    font-size: 0.9rem;
+    margin-top: 50px;
+}
+
+.social-links img {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.social-links img:hover {
+    opacity: 1;
+}
+
+/* Media Queries (Mantidas, pois controlam a transição do seu menu customizado) */
+@media (min-width: 768px) {
+    /* Header e Navegação */
+    /* No desktop, o menu-toggle é escondido pela classe d-md-none no HTML */
+
+    .main-nav .nav-list {
+        display: flex; /* Mostra o menu em linha no desktop */
+        flex-direction: row;
+        position: static;
+        width: auto;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .main-nav .nav-list li {
+        margin: 0 15px; /* Espaçamento entre os itens do menu no desktop */
+    }
+
+    .main-nav .nav-list .nav-link {
+        padding: 0;
+        background-color: transparent;
+        color: var(--bs-white); /* Cor dos links do menu no desktop */
+    }
+
+    /* Hero Section - Ajustes para desktop */
+    .hero-content h1 {
+        font-size: 4.5rem; /* Título maior no desktop */
+    }
+}
+
+/* Remover os estilos de .grid-layout e media queries para ele se você usar .row e .col-* do Bootstrap no HTML */
+/* Se você manter `.grid-layout` no HTML e quiser usar seu CSS grid, estas regras seriam mantidas:
+@media (min-width: 768px) {
+    .grid-layout {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 1024px) {
+    .grid-layout {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+*/
