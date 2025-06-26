@@ -100,6 +100,28 @@ body {
     min-height: 550px; 
 }
 
+/* Estilos para cards de serviço clicáveis (NOVO CÓDIGO AQUI) */
+.service-link {
+    /* Garante que o link preencha todo o card */
+    display: block; 
+    height: 100%;
+    color: inherit; /* Garante que as cores de texto dentro do card sejam herdadas ou definidas pelas classes do Bootstrap */
+    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    border: 1px solid var(--bs-border-color); /* Borda padrão do Bootstrap */
+}
+
+.service-link:hover {
+    transform: translateY(-5px); /* Efeito de elevação ao passar o mouse */
+    border-color: var(--consertecar-primary); /* Mudar cor da borda ao hover */
+    cursor: pointer;
+}
+
+/* Opcional: ajustar cores de texto dentro do card no hover, se o background mudar */
+/* Exemplo: .service-link:hover .card-title,
+.service-link:hover .card-text {
+    color: var(--bs-white) !important;
+} */
+
 /* Footer */
 .main-footer {
     background-color: var(--consertecar-dark-bg); /* Fundo do rodapé */
