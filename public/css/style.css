@@ -60,5 +60,20 @@
     margin: 0;
 }
 
+/* === ESTILOS PARA O CARROSSEL SWIPER.JS === */
+
+.oficinas-swiper {
+    padding-bottom: 50px; /* Espaço para as bolinhas de paginação não ficarem coladas */
+}
+
+/* Cor das setas e bolinhas para combinar com seu tema */
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--consertecar-primary);
+}
+
+.swiper-pagination-bullet-active {
+    background-color: var(--consertecar-primary);
+}
 
 @media (min-width:768px){.main-nav{flex-grow:1;display:flex;justify-content:flex-end;align-items:center}.main-nav .nav-list{display:flex;flex-direction:row;position:static;width:auto;padding:0;box-shadow:none;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{margin:0}.main-nav .nav-list .nav-link{padding:8px 15px;background-color:transparent;color:var(--bs-white)}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.05);color:var(--consertecar-primary)}.carousel-caption h1{font-size:4.5rem}}
