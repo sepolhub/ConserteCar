@@ -194,39 +194,96 @@
 
         </div>
     </div>
-</section>
+        </section>
 
 
-        <section id="contato" class="section-padding bg-light">
+            <section id="contato" class="section-padding bg-dark text-light">
             <div class="container">
-                <h2 class="section-title text-dark mb-5">Entre em Contato</h2>
-                <p class="section-description text-secondary">Tem alguma dúvida ou sugestão? Fale conosco!</p>
-                <form class="contact-form p-4 border rounded shadow-sm bg-white"> <div class="mb-3">
-                        <input type="text" class="form-control" id="contactName" placeholder="Seu Nome Completo" required>
+                <div class="row align-items-center">
+                    <div class="col-lg-5 mb-5 mb-lg-0">
+                        <h2 class="section-title text-white">Pronto para começar?</h2>
+                        <p class="lead text-white-50">Preencha o formulário ao lado com os dados necessários. Nosso setor comercial irá entrar em contato com você para tirar suas dúvidas e lhe enviar o melhor orçamento possível.</p>
+                        <div class="d-grid gap-2 mt-4">
+                            <a href="https://wa.me/55SEUNUMEROAQUI" target="_blank" class="btn btn-success btn-lg d-flex align-items-center justify-content-center">
+                                <i class="bi bi-whatsapp me-2"></i> Chamar no WhatsApp
+                            </a>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="contactEmail" placeholder="Seu Melhor E-mail" required>
+
+                    <div class="col-lg-7">
+                        <form class="contact-form p-4 p-md-5 rounded-3" data-bs-theme="dark">
+                            <div id="form-message" class="mb-3"></div>
+
+                            <div class="mb-4">
+                                <label for="contactName" class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="contactName" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="contactEmail" class="form-label">Seu Melhor E-mail</label>
+                                <input type="email" class="form-control" id="contactEmail" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="contactMessage" class="form-label">Mensagem</label>
+                                <textarea class="form-control" id="contactMessage" rows="5" required></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-lime btn-lg">Enviar</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <textarea class="form-control" id="contactMessage" placeholder="Sua Mensagem..." rows="6" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary align-self-end">Enviar Mensagem</button>
-                </form>
+                </div>
             </div>
         </section>
     </main>
 
-    <footer class="main-footer text-white py-4">
-        <div class="container footer-content d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <p class="mb-2 mb-md-0">&copy; 2025 ConserteCar. Todos os direitos reservados.</p>
-            <div class="social-links d-flex gap-3">
-                <a href="#" aria-label="Facebook"><img src="images/icon-facebook.svg" alt="Facebook"></a>
-                <a href="#" aria-label="Instagram"><img src="images/icon-instagram.svg" alt="Instagram"></a>
+    <footer class="main-footer">
+    <div class="container section-padding pb-5">
+        <div class="row g-5">
+            <div class="col-lg-4 col-md-6">
+                <h3 class="logo">ConserteCar</h3>
+                <p class="text-white-50 mt-3">Sua plataforma completa para cuidados automotivos, conectando você aos melhores serviços da sua região.</p>
+                <ul class="list-unstyled footer-contact-list mt-3">
+                    <li><i class="bi bi-geo-alt-fill me-2"></i>Porto Feliz, SP - Brasil</li>
+                    <li><i class="bi bi-envelope-fill me-2"></i>contato@consertecar.com.br</li>
+                    <li><i class="bi bi-telephone-fill me-2"></i>(15) 99999-9999</li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="footer-title">Navegação</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#dicas">Dicas</a></li>
+                    <li><a href="#depoimentos">Depoimentos</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5 class="footer-title">Empresa</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Trabalhe Conosco</a></li>
+                    <li><a href="#">Imprensa</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5 class="footer-title">Siga-nos</h5>
+                <div class="d-flex social-links-footer mt-3">
+                    <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                </div>
             </div>
         </div>
-    </footer>
-    
+    </div>
+    <button id="btnVoltarAoTopo" class="btn-voltar-ao-topo">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    </body>
+    <script src="js/script.js"></script>
+</body>
 </html>
