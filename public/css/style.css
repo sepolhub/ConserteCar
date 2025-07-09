@@ -3,221 +3,56 @@
 
 /* Variáveis CSS para customização */
 :root {
-    --consertecar-primary: var(--bs-primary); /* Usará o azul primário do Cosmo */
-    --consertecar-dark-bg: var(--bs-dark);    /* Usará o cinza escuro do Cosmo */
-    /* Você pode adicionar outras variáveis customizadas aqui se precisar de cores ou tamanhos específicos */
+    --consertecar-primary: var(--bs-primary);
+    --consertecar-dark-bg: var(--bs-dark);
 }
 
-/* Estilos globais (apenas o necessário, o Bootstrap já lida com o resto) */
+/* Estilos globais */
 body {
-    font-family: 'Roboto', sans-serif; /* Garante que Roboto seja usada */
+    font-family: 'Roboto', sans-serif;
     line-height: 1.6;
-    color: var(--bs-body-color); /* Cor de texto padrão do Bootstrap */
-    background-color: var(--bs-light); /* Cor de fundo padrão do Bootstrap */
+    color: var(--bs-body-color);
+    background-color: #f8f9fa;
 }
 
-/* Suas classes de utilidade customizadas */
 .section-padding {
-    padding: 60px 0; /* Padding vertical padrão para seções */
+    padding: 80px 0;
 }
 
-/* Header */
-.main-header {
-    background-color: var(--consertecar-dark-bg);
-    padding: 15px 0; /* Ajustado para um padding um pouco menor */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada */
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
+/* Header, Navegação, Menu Mobile... (código mantido) */
+.main-header{background-color:var(--consertecar-dark-bg);padding:15px 0;box-shadow:0 2px 8px rgba(0,0,0,.2);position:sticky;top:0;z-index:1000}.header-content{display:flex;justify-content:space-between;align-items:center}.logo{font-size:2.2rem;font-weight:700;color:var(--consertecar-primary);transition:color .3s ease}.logo:hover{color:var(--bs-white)}.main-nav{display:flex;align-items:center;justify-content:flex-end}.main-nav .nav-list{display:none;flex-direction:column;width:100%;position:absolute;top:100%;left:0;background-color:var(--consertecar-dark-bg);padding:20px 0;box-shadow:0 5px 10px rgba(0,0,0,.1);list-style:none;margin:0;transition:all .3s ease-in-out;transform:translateY(-100%);opacity:0;pointer-events:none}.main-nav .nav-list.active{display:flex;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{text-align:center;margin:10px 0}.main-nav .nav-list .nav-link{display:block;padding:10px 0;color:var(--bs-white);font-size:1.1rem;transition:background-color .3s ease,color .3s ease}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.1);text-decoration:none;color:var(--consertecar-primary)}.menu-toggle{background:none;border:none;color:var(--bs-white);font-size:2rem;cursor:pointer;transition:color .3s ease}.menu-toggle:hover{color:var(--consertecar-primary)}.header-btn{font-size:.95rem;padding:8px 18px;border-radius:50px;font-weight:600;transition:all .3s ease}.btn-outline-primary.header-btn{border-color:var(--consertecar-primary);color:var(--consertecar-primary)}.btn-outline-primary.header-btn:hover{background-color:var(--consertecar-primary);color:var(--bs-white)}
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+/* Hero Section (código mantido) */
+.hero-section{background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),url(../images/hero-bg.jpg) no-repeat center center/cover;min-height:550px}
 
-.logo {
-    font-size: 2.2rem; /* Levemente maior */
-    font-weight: 700;
-    color: var(--consertecar-primary); /* Cor do logo */
-    transition: color 0.3s ease; /* Transição para efeito hover */
-}
+/* Estilos para Cards de Serviço (Mecânica e Seguro) */
+.card-service{border:1px solid #e9ecef;border-top:4px solid #dee2e6;transition:all .3s ease}.card-icon{font-size:3.5rem;color:var(--consertecar-primary);margin-bottom:1rem;transition:all .3s ease}.card-service .card-title{color:var(--bs-dark)}.card-service:hover{transform:translateY(-8px);box-shadow:0 10px 25px rgba(0,0,0,.1);border-top-color:var(--consertecar-primary)}.card-service:hover .card-icon{transform:scale(1.1)}
 
-.logo:hover {
-    color: var(--bs-white); /* Cor branca no hover, ou uma cor de destaque do Cosmo */
-}
-
-/* Navegação (Menu Mobile/Hambúrguer - ESTILO CUSTOMIZADO) */
-.main-nav {
-    display: flex;
-    align-items: center; /* Alinha o menu-toggle com a lista no mobile se não estiver ativa */
-    justify-content: flex-end; /* Alinha o hambúrguer à direita no mobile */
-}
-
-.main-nav .nav-list {
-    display: none; /* Escondido por padrão no mobile */
-    flex-direction: column;
-    width: 100%;
-    position: absolute;
-    top: 100%; /* Posiciona abaixo do header */
-    left: 0;
-    background-color: var(--consertecar-dark-bg);
-    padding: 20px 0;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    list-style: none;
-    margin: 0;
-    /* Adicionado transição para suavizar a abertura do menu */
-    transition: all 0.3s ease-in-out; 
-    transform: translateY(-100%); /* Começa acima para o efeito slide down */
-    opacity: 0;
-    pointer-events: none; /* Impede cliques quando invisível */
-}
-
-.main-nav .nav-list.active {
-    display: flex; /* Mostra o menu quando a classe 'active' é adicionada pelo JS */
-    transform: translateY(0); /* Volta para a posição normal */
-    opacity: 1;
-    pointer-events: auto; /* Permite cliques */
-}
-
-.main-nav .nav-list li {
-    text-align: center;
-    margin: 10px 0;
-}
-
-/* Links dentro do menu mobile */
-.main-nav .nav-list .nav-link {
-    display: block;
-    padding: 10px 0;
-    color: var(--bs-white); /* Cor dos links do menu mobile */
-    font-size: 1.1rem;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Adicionado transição para cor */
-}
-
-.main-nav .nav-list .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    text-decoration: none;
-    color: var(--consertecar-primary); /* Destaque o link no hover */
-}
-
-.menu-toggle {
-    background: none;
-    border: none;
+/* === ESTILO ATUALIZADO PARA O CARD DE DESTAQUE DO GUINCHO === */
+.cta-guincho {
+    background-color: var(--bs-danger);
     color: var(--bs-white);
-    font-size: 2rem;
-    cursor: pointer;
-    transition: color 0.3s ease; /* Transição para o ícone */
-}
-
-.menu-toggle:hover {
-    color: var(--consertecar-primary); /* Destaque o ícone no hover */
-}
-
-/* Estilo para os botões Login/Cadastro no header */
-.header-btn {
-    font-size: 0.95rem; /* Um pouco menor para caber melhor no header */
-    padding: 8px 18px; /* Ajuste o padding para o tamanho ideal */
-    border-radius: 50px; /* Bordas mais arredondadas (pílula) */
-    font-weight: 600; /* Um pouco mais negrito */
+    border-radius: var(--bs-card-border-radius);
+    padding: 1.25rem; /* Padding padrão do card */
     transition: all 0.3s ease;
+    box-shadow: var(--bs-box-shadow-sm);
 }
 
-.btn-outline-primary.header-btn { /* Ajuste específico para o botão de contorno */
-    border-color: var(--consertecar-primary);
-    color: var(--consertecar-primary);
-}
-
-.btn-outline-primary.header-btn:hover {
-    background-color: var(--consertecar-primary);
+.cta-guincho .card-title {
     color: var(--bs-white);
+    font-weight: 700;
 }
 
-/* Hero Section (Customizada pela imagem de fundo) */
-.hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/hero-bg.jpg') no-repeat center center/cover;
-    /* Ajuste o '600px' ou '550px' conforme a altura desejada */
-    min-height: 550px; 
+.cta-guincho .card-text {
+    color: rgba(255, 255, 255, 0.85); /* Branco com um pouco de transparência */
 }
 
-/* Estilos para cards de serviço clicáveis */
-.service-link {
-    /* Garante que o link preencha todo o card */
-    display: block; 
-    height: 100%;
-    color: inherit; /* Garante que as cores de texto dentro do card sejam herdadas ou definidas pelas classes do Bootstrap */
-    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-    border: 1px solid var(--bs-border-color); /* Borda padrão do Bootstrap */
+.cta-guincho:hover {
+    background-color: #a71c27; /* Vermelho mais escuro */
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-.service-link:hover {
-    transform: translateY(-5px); /* Efeito de elevação ao passar o mouse */
-    border-color: var(--consertecar-primary); /* Mudar cor da borda ao hover */
-    cursor: pointer;
-}
-
-/* Opcional: ajustar cores de texto dentro do card no hover, se o background mudar */
-/* Exemplo: .service-link:hover .card-title,
-.service-link:hover .card-text {
-    color: var(--bs-white) !important;
-} */
-
-/* Footer */
-.main-footer {
-    background-color: var(--consertecar-dark-bg); /* Fundo do rodapé */
-    color: var(--bs-white); /* Cor do texto do rodapé */
-    font-size: 0.9rem;
-    margin-top: 50px;
-}
-
-.social-links img {
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.social-links img:hover {
-    opacity: 1;
-}
-
-/* Media Queries (Mantidas, pois controlam a transição do seu menu customizado e layout) */
-@media (min-width: 768px) {
-    /* Header e Navegação para Desktop */
-    .main-nav {
-        flex-grow: 1; 
-        display: flex;
-        justify-content: flex-end; /* Alinha o menu principal à direita */
-        align-items: center;
-    }
-
-    .main-nav .nav-list {
-        display: flex; /* Mostra o menu em linha no desktop */
-        flex-direction: row;
-        position: static; /* Remove posicionamento absoluto */
-        width: auto;
-        padding: 0;
-        box-shadow: none;
-        transform: translateY(0); /* Garante que esteja visível no desktop */
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .main-nav .nav-list li {
-        margin: 0; /* Reset de margem mobile */
-    }
-
-    .main-nav .nav-list .nav-link {
-        padding: 8px 15px; /* Padding ajustado para desktop */
-        background-color: transparent;
-        color: var(--bs-white); /* Cor dos links do menu no desktop */
-    }
-
-    .main-nav .nav-list .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.05); /* Um leve background no hover */
-        color: var(--consertecar-primary); /* Destaque a cor do texto no hover */
-    }
-
-    /* Hero Section - Ajustes para desktop */
-    .hero-content h1 {
-        font-size: 4.5rem; /* Título maior no desktop */
-    }
-}
+/* Footer e Media Queries (código mantido) */
+.main-footer{background-color:var(--consertecar-dark-bg);color:var(--bs-white);font-size:.9rem;margin-top:50px}.social-links img{opacity:.8;transition:opacity .3s ease}.social-links img:hover{opacity:1}
+@media (min-width:768px){.main-nav{flex-grow:1;display:flex;justify-content:flex-end;align-items:center}.main-nav .nav-list{display:flex;flex-direction:row;position:static;width:auto;padding:0;box-shadow:none;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{margin:0}.main-nav .nav-list .nav-link{padding:8px 15px;background-color:transparent;color:var(--bs-white)}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.05);color:var(--consertecar-primary)}.hero-content h1{font-size:4.5rem}}
