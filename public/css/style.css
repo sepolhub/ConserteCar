@@ -1,4 +1,4 @@
-/* (Seu código CSS completo está aqui, com as novas regras) */
+/* Importação de fonte do Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 :root{--consertecar-primary:var(--bs-primary);--consertecar-dark-bg:var(--bs-dark)}body{font-family:'Roboto',sans-serif;line-height:1.6;color:var(--bs-body-color);background-color:#f8f9fa}.section-padding{padding:80px 0}
 .main-header{background-color:var(--consertecar-dark-bg);padding:15px 0;box-shadow:0 2px 8px rgba(0,0,0,.2);position:sticky;top:0;z-index:1000}.header-content{display:flex;justify-content:space-between;align-items:center}.logo{font-size:2.2rem;font-weight:700;color:var(--consertecar-primary);transition:color .3s ease;text-decoration:none}.logo:hover{color:var(--bs-white)}.main-nav{display:flex;align-items:center;justify-content:flex-end}.main-nav .nav-list{display:none;flex-direction:column;width:100%;position:absolute;top:100%;left:0;background-color:var(--consertecar-dark-bg);padding:20px 0;box-shadow:0 5px 10px rgba(0,0,0,.1);list-style:none;margin:0;transition:all .3s ease-in-out;transform:translateY(-100%);opacity:0;pointer-events:none}.main-nav .nav-list.active{display:flex;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{text-align:center;margin:10px 0}.main-nav .nav-list .nav-link{display:block;padding:10px 0;color:var(--bs-white);font-size:1.1rem;transition:background-color .3s ease,color .3s ease}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.1);text-decoration:none;color:var(--consertecar-primary)}.menu-toggle{background:none;border:none;color:var(--bs-white);font-size:2rem;cursor:pointer;transition:color .3s ease}.menu-toggle:hover{color:var(--consertecar-primary)}.header-btn{font-size:.95rem;padding:8px 18px;border-radius:50px;font-weight:600;transition:all .3s ease}.btn-outline-primary.header-btn{border-color:var(--consertecar-primary);color:var(--consertecar-primary)}.btn-outline-primary.header-btn:hover{background-color:var(--consertecar-primary);color:var(--bs-white)}
@@ -6,42 +6,94 @@
 #slide1{background-image:url(../img/oficina.jpg)}#slide2{background-image:url(../img/colocandopneu.jpg)}#slide3{background-image:url(../img/carrovermelho.jpg)}#slide4 { background-image: url('../img/parceria.jpg')}
 #cta-parceiros{background-color:#f8f9fa;background-image:linear-gradient(135deg,#e9ecef 0%,#f8f9fa 100%)}
 
-/* === ESTILOS ATUALIZADOS PARA CARDS === */
-.card-link-wrapper {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    height: 100%;
-}
-.card-link-wrapper .card {
-    transition: all 0.3s ease-in-out;
-}
-.card-link-wrapper:hover .card {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-/* Estilo para o card de emergência (Guincho) */
-.card-emergency {
-    border: 2px solid var(--bs-danger);
-}
-.card-emergency .card-title {
-    color: var(--bs-danger);
-}
-
-/* Estilo para imagens no topo dos cards (reutilizável) */
-.card-top-image {
+/* Estilos para Cards de Serviço com Imagem no Topo */
+.service-card-img, .dicas-card-img {
     height: 180px;
     object-fit: cover;
 }
+.service-card {
+    transition: all 0.3s ease;
+}
+a:hover > .service-card {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.service-card-danger .service-card {
+    background-color: var(--bs-danger);
+    color: white;
+    border-color: var(--bs-danger);
+}
+.service-card-danger .card-title,
+.service-card-danger .card-text {
+    color: white;
+}
+.service-card-danger:hover .service-card {
+    background-color: #a71c27;
+}
 
-/* (Código antigo dos cards de serviço removido ou adaptado) */
+/* === SEÇÃO DE ESTILOS QUE ESTAVA FALTANDO === */
+/* Estilos para os Cards Personalizados de Oficinas em Destaque */
+.case-card {
+    background-color: white;
+    border: 3px solid var(--consertecar-primary);
+    padding: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%;
+}
+.case-card:hover {
+    transform: translateY(-10px) rotate(1.5deg);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    border-radius: 55% 45% 55% 45% / 45% 55% 45% 55%;
+}
+.case-card-image {
+    height: 200px;
+    border-radius: inherit;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+.case-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.case-card:hover .case-card-image img {
+    transform: scale(1.1);
+}
+.case-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.case-card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+/* ================================================= */
 
 .testimonial-card{background-color:#fff;border:1px solid #e9ecef;transition:all .3s ease}.testimonial-card:hover{transform:translateY(-8px);box-shadow:0 10px 25px rgba(0,0,0,.1)}.testimonial-featured{border-color:var(--consertecar-primary);transform:scale(1.05)}.testimonial-featured:hover{transform:scale(1.1) translateY(-8px)}.testimonial-text{font-style:italic;color:#6c757d;font-size:1.1rem;padding:1rem 0}.testimonial-text::before{content:'“';font-size:3rem;color:var(--consertecar-primary);opacity:.5;position:relative;top:1rem;left:-.5rem}.testimonial-author-img{width:60px;height:60px;object-fit:cover;margin-right:1rem;border-radius:50%}.card-footer{background-color:transparent;border-top:1px solid #e9ecef}
 .contact-form{background-color:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}.btn-lime{background-color:#AFFF33;color:#000;font-weight:700;border:none;transition:all .3s ease}.btn-lime:hover{background-color:#fff;color:#000;transform:scale(1.02)}
 .main-footer{background-color:#121212;color:#adb5bd}.footer-title{color:#fff;font-weight:700;margin-bottom:1rem}.footer-contact-list li{margin-bottom:.5rem}.footer-contact-list i{color:var(--consertecar-primary)}.footer-links li{margin-bottom:.75rem}.footer-links a{color:#adb5bd;text-decoration:none;transition:all .3s ease}.footer-links a:hover{color:#fff;padding-left:5px}.social-links-footer .social-icon{display:inline-flex;justify-content:center;align-items:center;width:40px;height:40px;background-color:rgba(255,255,255,.1);color:#fff;border-radius:50%;text-decoration:none;margin-right:10px;transition:all .3s ease}.social-links-footer .social-icon:hover{background-color:var(--consertecar-primary);transform:translateY(-3px)}.footer-bottom{background-color:#000;color:#6c757d}
 .btn-voltar-ao-topo{position:fixed;bottom:20px;right:20px;z-index:999;display:none;width:50px;height:50px;border-radius:50%;background-color:var(--consertecar-primary);color:#fff;border:none;font-size:1.5rem;box-shadow:0 4px 10px rgba(0,0,0,.2);transition:opacity .3s ease,transform .3s ease;opacity:0}.btn-voltar-ao-topo.show{display:block;opacity:1}.btn-voltar-ao-topo:hover{background-color:var(--bs-primary);transform:scale(1.1)}
-.case-card{background-color:#fff;border:3px solid var(--consertecar-primary);padding:1rem;box-shadow:0 4px 15px rgba(0,0,0,.08);transition:all .4s cubic-bezier(.175,.885,.32,1.275);border-radius:45% 55% 60% 40%/55% 45% 55% 45%}.case-card:hover{transform:translateY(-10px) rotate(1.5deg);box-shadow:0 15px 30px rgba(0,0,0,.12);border-radius:55% 45% 55% 45%/45% 55% 45% 55%}.case-card-image{height:200px;border-radius:inherit;overflow:hidden;margin-bottom:1rem}.case-card-image img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}.case-card:hover .case-card-image img{transform:scale(1.1)}.case-card-info{display:flex;justify-content:space-between;align-items:center}.case-card-title{font-size:1.2rem;font-weight:700;margin:0}
-.dicas-card-img { height: 180px; object-fit: cover; }
-
 @media (min-width:768px){.main-nav{flex-grow:1;display:flex;justify-content:flex-end;align-items:center}.main-nav .nav-list{display:flex;flex-direction:row;position:static;width:auto;padding:0;box-shadow:none;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{margin:0}.main-nav .nav-list .nav-link{padding:8px 15px;background-color:transparent;color:var(--bs-white)}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.05);color:var(--consertecar-primary)}.carousel-caption h1{font-size:4.5rem}}
+
+/* === ESTILOS PARA PÁGINAS DE LOGIN E CADASTRO === */
+
+.auth-page {
+    padding: 80px 0;
+    background-color: #f8f9fa; /* Um fundo levemente cinza */
+    min-height: calc(100vh - 160px); /* Garante que a página ocupe a altura da tela */
+    display: flex;
+    align-items: center;
+}
+
+.auth-card {
+    border: none;
+    border-radius: 0.75rem;
+}
+
+.auth-card .card-body {
+    padding: 2rem;
+}
