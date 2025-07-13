@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ConserteCar</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Caminho Corrigido -->
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
     <header class="main-header">
         <div class="container header-content">
-            <a href="/public/index.html" class="logo text-decoration-none">ConserteCar</a>
+            <!-- Caminhos Corrigidos -->
+            <a href="/" class="logo text-decoration-none">ConserteCar</a>
             <nav class="main-nav">
                 <ul class="nav-list list-unstyled d-flex flex-column flex-md-row align-items-center mb-0">
                     <li class="nav-item me-md-3 mb-2 mb-md-0"><a href="/#servicos" class="nav-link text-white fw-bold py-2">Serviços</a></li>
                     <li class="nav-item me-md-3 mb-2 mb-md-0"><a href="/#dicas" class="nav-link text-white fw-bold py-2">Dicas</a></li>
                     <li class="nav-item me-md-4 mb-3 mb-md-0"><a href="/#contato" class="nav-link text-white fw-bold py-2">Contato</a></li>
-                    <li class="nav-item me-md-2 mb-2 mb-md-0"><a href="login.html" class="btn btn-outline-primary header-btn">Login</a></li>
-                    <li class="nav-item"><a href="cadastro.html" class="btn btn-primary header-btn">Cadastre-se</a></li>
+                    <li class="nav-item me-md-2 mb-2 mb-md-0"><a href="/login" class="btn btn-outline-primary header-btn">Login</a></li>
+                    <li class="nav-item"><a href="/cadastro" class="btn btn-primary header-btn">Cadastre-se</a></li>
                 </ul>
                 <button class="menu-toggle d-md-none" aria-label="Abrir Menu">&#9776;</button>
             </nav>
@@ -33,40 +35,22 @@
                         <div class="card-body">
                             <h2 class="card-title text-center mb-4">Acessar Conta</h2>
                             <form>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Senha</label>
-                                    <input type="password" class="form-control" id="password" required>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="rememberMe">
-                                        <label class="form-check-label" for="rememberMe">Lembrar-me</label>
-                                    </div>
-                                    <a href="#" class="form-text text-decoration-none">Esqueceu a senha?</a>
-                                </div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
-                                </div>
+                                <div class="mb-3"><label for="email" class="form-label">Email</label><input type="email" class="form-control" id="email" required></div>
+                                <div class="mb-3"><label for="password" class="form-label">Senha</label><input type="password" class="form-control" id="password" required></div>
+                                <div class="d-flex justify-content-between align-items-center mb-3"><div class="form-check"><input type="checkbox" class="form-check-input" id="rememberMe"><label class="form-check-label" for="rememberMe">Lembrar-me</label></div><a href="#" class="form-text text-decoration-none">Esqueceu a senha?</a></div>
+                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Entrar</button></div>
                             </form>
                             <hr class="my-4">
-                            <p class="text-center">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+                            <p class="text-center">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
-    <div style="margin-top: 100px;">
-        <footer class="main-footer">
-            </footer>
-    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/script.js"></script>
+    <!-- Caminho Corrigido -->
+    <script src="/js/script.js"></script>
 </body>
 </html>
