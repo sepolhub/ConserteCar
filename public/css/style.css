@@ -34,3 +34,10 @@ a:hover > .service-card {transform: translateY(-8px);box-shadow: 0 10px 25px rgb
 }
 
 @media (min-width:768px){.main-nav{flex-grow:1;display:flex;justify-content:flex-end;align-items:center}.main-nav .nav-list{display:flex;flex-direction:row;position:static;width:auto;padding:0;box-shadow:none;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{margin:0}.main-nav .nav-list .nav-link{padding:8px 15px;background-color:transparent;color:var(--bs-white)}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.05);color:var(--consertecar-primary)}.carousel-caption h1{font-size:4.5rem}}
+
+/* === ESTILOS PARA A PÁGINA DE SERVIÇOS === */
+
+.map-container {
+    height: 500px; /* Altura do mapa */
+    width: 100%;
+}
