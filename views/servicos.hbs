@@ -8,19 +8,33 @@
             <!-- Coluna dos Filtros -->
             <div class="col-lg-3">
                 <h4>Filtrar Busca</h4>
-                <div class="list-group">
-                    <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="">Mecânica Geral</label>
-                    <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="">Borracharia</label>
-                    <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="">Funilaria e Pintura</label>
-                    <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="">Elétrica</label>
+                <div class="list-group shadow-sm">
+                    <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="Mecânica Geral">
+                        Mecânica Geral
+                    </label>
+                    <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="Borracharia">
+                        Borracharia
+                    </label>
+                    <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="Funilaria e Pintura">
+                        Funilaria e Pintura
+                    </label>
+                    <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="Elétrica">
+                        Elétrica
+                    </label>
                 </div>
             </div>
+
             <!-- Coluna do Mapa e Resultados -->
             <div class="col-lg-9">
                 <div id="mapa" class="map-container shadow-sm rounded mb-4"></div>
+                
+                <!-- Lista de Resultados -->
                 <div id="lista-resultados">
-                    <h4 class="mb-3">Resultados da Busca</h4>
-                    <!-- Resultados serão inseridos aqui pelo script.js -->
+                    <!-- O conteúdo será inserido dinamicamente aqui pelo script.js -->
                 </div>
             </div>
         </div>
