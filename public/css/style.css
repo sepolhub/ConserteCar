@@ -33,18 +33,83 @@ a:hover > .service-card {transform: translateY(-8px);box-shadow: 0 10px 25px rgb
     padding: 2rem;
 }
 
-/* === ESTILOS PARA A PÁGINA DE SERVIÇOS === */
-.map-container {
-    height: 500px;
+/* === ESTILOS PARA A PÁGINA DE SERVIÇOS (ECRÃ DIVIDIDO) === */
+
+/* Remove o padding padrão para este layout */
+main.service-split-layout {
+    padding: 0;
+}
+
+/* Faz o layout ocupar toda a altura da janela, descontando o header */
+.service-split-layout {
+    display: flex;
+    height: calc(100vh - 72px); /* Altura da janela - altura do header (ajuste se necessário) */
+}
+
+/* Painel da Esquerda (Resultados) */
+.results-pane {
+    width: 400px;
+    background-color: #fff;
+    border-right: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Permite rolar a lista de resultados */
+}
+#lista-resultados {
+    flex-grow: 1;
+}
+
+/* Painel da Direita (Mapa) */
+.map-pane {
+    flex-grow: 1; /* Ocupa todo o espaço restante */
+}
+.map-pane .map-container {
     width: 100%;
+    height: 100%;
+}
+
+/* Novos Cards de Resultado (Compactos) */
+.result-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.result-card:hover {
+    background-color: #f8f9fa;
+}
+.result-card-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+.result-card-body {
+    flex-grow: 1;
 }
 .rating-stars {
     color: #ffc107;
 }
-.btn-ver-mapa {
-    font-size: 0.8rem;
-    line-height: 1.2;
+
+@media (max-width: 992px) {
+    .service-split-layout {
+        flex-direction: column;
+        height: auto;
+    }
+    .results-pane {
+        width: 100%;
+        height: 50vh; /* Ocupa metade da tela no mobile */
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
 }
 
+.result-card-highlight {
+    background-color: #daf1ff !important; /* Um azul claro para destacar */
+    border-left: 4px solid var(--consertecar-primary);
+}
 
 @media (min-width:768px){.main-nav{flex-grow:1;display:flex;justify-content:flex-end;align-items:center}.main-nav .nav-list{display:flex;flex-direction:row;position:static;width:auto;padding:0;box-shadow:none;transform:translateY(0);opacity:1;pointer-events:auto}.main-nav .nav-list li{margin:0}.main-nav .nav-list .nav-link{padding:8px 15px;background-color:transparent;color:var(--bs-white)}.main-nav .nav-list .nav-link:hover{background-color:rgba(255,255,255,.05);color:var(--consertecar-primary)}.carousel-caption h1{font-size:4.5rem}}

@@ -57,6 +57,6 @@ app.get('/cadastro', (req, res) => {
 
 // VAI COMEÇAR O SERVIDOR AQUI!
 app.listen(PORT, () => {
-    console.log(`Servidor ConserteCar rodando em http://localhost:${PORT}`);
+    console.log(`Servidor ConserteCar rodando em http://localhost:${3000}`);
     console.log('Pressione Ctrl+C para parar o servidor.');
 });

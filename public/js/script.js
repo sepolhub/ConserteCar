@@ -59,55 +59,63 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA PARA O MAPA NA PÁGINA DE SERVIÇOS ---
-    const mapaContainer = document.getElementById('mapa');
+   const mapaContainer = document.getElementById('mapa');
 
-    // Este código só vai rodar se o elemento com id="mapa" existir na página
     if (mapaContainer) {
         
-        const localizacaoPadrao = [-23.5505, -46.6333]; // Coordenadas de São Paulo
+        const localizacaoPadrao = [-23.5505, -46.6333];
         const zoomPadrao = 13;
-        const mapa = L.map('mapa').setView(localizacaoPadrao, zoomPadrao);
-        let userMarker = null; // Variável para guardar a localização do utilizador
+        const mapa = L.map('mapa', { zoomControl: false }).setView(localizacaoPadrao, zoomPadrao);
+        L.control.zoom({ position: 'topright' }).addTo(mapa);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mapa);
 
+        const userIcon = L.icon({ iconUrl: 'https://i.imgur.com/u3W4bGO.png', iconSize: [40, 40], popupAnchor: [0, -20] });
+        const workshopIcon = L.icon({ iconUrl: 'https://i.imgur.com/A7i981t.png', iconSize: [30, 40], iconAnchor: [15, 40], popupAnchor: [0, -35] });
+
         const oficinasExemplo = [
-            { id: 1, nome: 'Auto Mecânica Veloz', endereco: 'Av. Paulista, 1000', lat: -23.5614, lon: -46.6564, servicos: ['Mecânica Geral', 'Elétrica'], rating: 4.5 },
-            { id: 2, nome: 'JP Pneus e Serviços', endereco: 'Rua da Consolação, 222', lat: -23.5489, lon: -46.6500, servicos: ['Borracharia'], rating: 5.0 },
-            { id: 3, nome: 'Car Center Estética', endereco: 'Rua Augusta, 1500', lat: -23.5573, lon: -46.6620, servicos: ['Funilaria e Pintura'], rating: 4.0 },
-            { id: 4, nome: 'Rei do Óleo', endereco: 'Av. Brigadeiro Faria Lima, 4500', lat: -23.5859, lon: -46.6836, servicos: ['Mecânica Geral'], rating: 4.8 }
+            { id: 1, nome: 'Auto Mecânica Veloz', endereco: 'Av. Paulista, 1000', lat: -23.5614, lon: -46.6564, servicos: ['Mecânica Geral', 'Elétrica'], rating: 4.5, img: '/images/oficina-destaque-1.jpg' },
+            { id: 2, nome: 'JP Pneus e Serviços', endereco: 'Rua da Consolação, 222', lat: -23.5489, lon: -46.6500, servicos: ['Borracharia'], rating: 5.0, img: '/images/oficina-destaque-2.jpg' },
+            { id: 3, nome: 'Car Center Estética', endereco: 'Rua Augusta, 1500', lat: -23.5573, lon: -46.6620, servicos: ['Funilaria e Pintura'], rating: 4.0, img: '/images/oficina-destaque-3.jpg' },
+            { id: 4, nome: 'Rei do Óleo', endereco: 'Av. Brigadeiro Faria Lima, 4500', lat: -23.5859, lon: -46.6836, servicos: ['Mecânica Geral'], rating: 4.8, img: '/images/oficina-destaque-4.jpg' },
+            { id: 5, nome: 'Speed Motorsport', endereco: 'Av. Morumbi, 7000', lat: -23.6119, lon: -46.7037, servicos: ['Mecânica Geral', 'Elétrica'], rating: 4.9, img: '/images/oficina-destaque-5.jpg' },
+            { id: 6, nome: 'Borracharia Central', endereco: 'Praça da Sé, 100', lat: -23.5507, lon: -46.6333, servicos: ['Borracharia'], rating: 4.2, img: '/images/oficina-destaque-1.jpg' },
+            { id: 7, nome: 'Pintura Mágica', endereco: 'Rua Oscar Freire, 500', lat: -23.5600, lon: -46.6690, servicos: ['Funilaria e Pintura'], rating: 4.7, img: '/images/oficina-destaque-2.jpg' }
         ];
 
-        let markersLayer = L.layerGroup().addTo(mapa);
-        
-        // --- NOVA FUNÇÃO PARA CALCULAR DISTÂNCIA ---
-        function calcularDistancia(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Raio da Terra em km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Distância em km
-        }
+        let userMarker = null;
+        let markers = {};
+
+        function calcularDistancia(lat1, lon1, lat2, lon2) { /* ...função de distância... */ }
 
         function renderizarOficinas(listaDeOficinas) {
             const listaResultados = document.getElementById('lista-resultados');
+            const resultsCount = document.getElementById('results-count');
             
-            markersLayer.clearLayers();
-            listaResultados.innerHTML = '<h4 class="mb-3">Resultados da Busca</h4>'; 
+            for (const id in markers) { mapa.removeLayer(markers[id]); }
+            markers = {};
+            
+            if (resultsCount) resultsCount.textContent = `${listaDeOficinas.length} resultados encontrados`;
+            listaResultados.innerHTML = ''; 
             
             if (listaDeOficinas.length === 0) {
-                listaResultados.innerHTML += '<p>Nenhuma oficina encontrada com os filtros selecionados.</p>';
+                listaResultados.innerHTML = '<p class="px-4">Nenhuma oficina encontrada perto de si ou com os filtros selecionados.</p>';
                 return;
             }
 
+            let pontosParaZoom = [];
+            if (userMarker) pontosParaZoom.push(userMarker.getLatLng());
+
             listaDeOficinas.forEach(oficina => {
-                L.marker([oficina.lat, oficina.lon]).addTo(markersLayer)
-                    .bindPopup(`<b>${oficina.nome}</b><br>${oficina.endereco}`);
+                const pontoOficina = [oficina.lat, oficina.lon];
+                pontosParaZoom.push(pontoOficina);
+                const marker = L.marker(pontoOficina, { icon: workshopIcon }).addTo(mapa).bindPopup(`<b>${oficina.nome}</b>`);
+                marker.oficinaId = oficina.id;
+                markers[oficina.id] = marker;
+
+                marker.on('click', function() { /* ...lógica de clique no marcador... */ });
 
                 let ratingHtml = '';
                 for (let i = 1; i <= 5; i++) {
@@ -116,82 +124,85 @@ document.addEventListener('DOMContentLoaded', () => {
                     else ratingHtml += '<i class="bi bi-star"></i>';
                 }
 
-                // --- CÁLCULO E EXIBIÇÃO DA DISTÂNCIA ---
-                let distanciaHtml = '';
-                if (userMarker) {
-                    const userLat = userMarker.getLatLng().lat;
-                    const userLon = userMarker.getLatLng().lng;
-                    const distancia = calcularDistancia(userLat, userLon, oficina.lat, oficina.lon);
-                    distanciaHtml = `<p class="card-text"><i class="bi bi-geo-alt-fill me-1"></i>Aprox. ${distancia.toFixed(1)} km de você</p>`;
-                }
+                let distanciaHtml = oficina.distancia ? `<span class="text-muted small">${oficina.distancia.toFixed(1)} km</span>` : '';
 
                 const cardHtml = `
-                    <div class="card mb-3 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h5 class="card-title">${oficina.nome}</h5>
-                                    <p class="card-text text-muted mb-2">${oficina.endereco}</p>
-                                    <div class="rating-stars mb-2" title="Avaliação: ${oficina.rating} de 5">
-                                        ${ratingHtml}
-                                        <span class="ms-2 text-muted">(${oficina.rating.toFixed(1)})</span>
-                                    </div>
-                                    ${distanciaHtml}
-                                </div>
-                                <div class="text-center">
-                                    <button class="btn btn-sm btn-outline-primary btn-ver-mapa" data-lat="${oficina.lat}" data-lon="${oficina.lon}">
-                                        Ver no<br>Mapa
-                                    </button>
-                                </div>
+                    <div class="result-card" data-id="${oficina.id}">
+                        <img src="${oficina.img}" alt="${oficina.nome}" class="result-card-img">
+                        <div class="result-card-body">
+                            <h6 class="mb-1">${oficina.nome}</h6>
+                            <div class="rating-stars small mb-1" title="Avaliação: ${oficina.rating} de 5">
+                                ${ratingHtml} <span class="ms-1">(${oficina.rating.toFixed(1)})</span>
                             </div>
+                            <p class="text-muted small mb-0">${distanciaHtml}</p>
                         </div>
                     </div>
                 `;
                 listaResultados.innerHTML += cardHtml;
             });
-        }
 
-        const checkboxesFiltro = document.querySelectorAll('.list-group-item input[type="checkbox"]');
+            // Ajusta o zoom para mostrar os pontos relevantes
+            if (pontosParaZoom.length > 0) {
+                mapa.fitBounds(pontosParaZoom, { padding: [50, 50] });
+            }
+        }
+        
+        const sortBySelect = document.getElementById('sortBy');
+        const checkboxesFiltro = document.querySelectorAll('#filtros-servicos input[type="checkbox"]');
+
         function atualizarResultados() {
-            const filtrosSelecionados = [];
-            checkboxesFiltro.forEach(checkbox => {
-                if (checkbox.checked) filtrosSelecionados.push(checkbox.value);
-            });
-            const oficinasFiltradas = filtrosSelecionados.length === 0 ? oficinasExemplo : oficinasExemplo.filter(oficina => oficina.servicos.some(servico => filtrosSelecionados.includes(servico)));
+            // 1. Filtra por tipo de serviço
+            const filtrosSelecionados = Array.from(checkboxesFiltro).filter(i => i.checked).map(i => i.value);
+            let oficinasFiltradas = filtrosSelecionados.length === 0 
+                ? [...oficinasExemplo] 
+                : oficinasExemplo.filter(oficina => oficina.servicos.some(servico => filtrosSelecionados.includes(servico)));
+
+            // 2. --- NOVO: Filtra por distância se a localização do utilizador for conhecida ---
+            if (userMarker) {
+                const RAIO_MAXIMO_KM = 50; // Defina aqui o raio máximo de busca
+                oficinasFiltradas = oficinasFiltradas.filter(oficina => oficina.distancia <= RAIO_MAXIMO_KM);
+            }
+
+            // 3. Ordena os resultados
+            if (sortBySelect) {
+                const sortValue = sortBySelect.value;
+                if (sortValue === 'distancia' && userMarker) {
+                    oficinasFiltradas.sort((a, b) => a.distancia - b.distancia);
+                } else if (sortValue === 'avaliacao') {
+                    oficinasFiltradas.sort((a, b) => b.rating - a.rating);
+                }
+            }
+            
             renderizarOficinas(oficinasFiltradas);
         }
-        checkboxesFiltro.forEach(checkbox => checkbox.addEventListener('change', atualizarResultados));
 
-        document.getElementById('lista-resultados').addEventListener('click', function(event) {
-            const target = event.target.closest('.btn-ver-mapa');
-            if (target) {
-                const lat = parseFloat(target.dataset.lat);
-                const lon = parseFloat(target.dataset.lon);
-                mapa.flyTo([lat, lon], 16);
-                markersLayer.eachLayer(layer => {
-                    if (layer.getLatLng().lat === lat && layer.getLatLng().lng === lon) layer.openPopup();
-                });
-            }
-        });
+        if (checkboxesFiltro.length > 0) checkboxesFiltro.forEach(checkbox => checkbox.addEventListener('change', atualizarResultados));
+        if (sortBySelect) sortBySelect.addEventListener('change', atualizarResultados);
+        
+        const listaResultadosDiv = document.getElementById('lista-resultados');
+        if(listaResultadosDiv) { /* ...lógica de mouseover... */ }
 
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (posicao) => {
                     const userLatLng = [posicao.coords.latitude, posicao.coords.longitude];
-                    userMarker = L.marker(userLatLng).addTo(mapa).bindPopup('<b>Você está aqui!</b>').openPopup();
-                    mapa.setView(userLatLng, zoomPadrao);
+                    userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(mapa).bindPopup('<b>Você está aqui!</b>').openPopup();
                     
-                    // Re-renderiza os cards agora que temos a localização do utilizador para calcular a distância
-                    atualizarResultados(); 
+                    oficinasExemplo.forEach(oficina => {
+                        oficina.distancia = calcularDistancia(userLatLng[0], userLatLng[1], oficina.lat, oficina.lon);
+                    });
+
+                    atualizarResultados(); // Chama a função que agora irá filtrar e ordenar
                 },
                 (erro) => {
-                    console.warn(`AVISO: Não foi possível obter a localização. Erro (${erro.code}): ${erro.message}`);
-                    renderizarOficinas(oficinasExemplo); // Renderiza sem a distância
+                    console.warn(`AVISO: Não foi possível obter a localização.`, erro);
+                    if(sortBySelect) sortBySelect.querySelector('option[value="distancia"]').disabled = true;
+                    atualizarResultados(); // Renderiza mesmo sem localização
                 }
             );
         } else {
-            console.error("Geolocalização não é suportada por este navegador.");
-            renderizarOficinas(oficinasExemplo); // Renderiza sem a distância
+            if(sortBySelect) sortBySelect.querySelector('option[value="distancia"]').disabled = true;
+            atualizarResultados(); // Renderiza mesmo sem geolocalização
         }
     }
 });

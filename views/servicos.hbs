@@ -1,42 +1,52 @@
-<main class="section-padding">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h1 class="section-title text-dark">Encontre Oficinas e Serviços</h1>
-            <p class="lead text-secondary">Use o mapa para encontrar os melhores profissionais perto de você.</p>
-        </div>
-        <div class="row g-5">
-            <!-- Coluna dos Filtros -->
-            <div class="col-lg-3">
-                <h4>Filtrar Busca</h4>
-                <div class="list-group shadow-sm">
-                    <label class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" value="Mecânica Geral">
-                        Mecânica Geral
-                    </label>
-                    <label class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" value="Borracharia">
-                        Borracharia
-                    </label>
-                    <label class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" value="Funilaria e Pintura">
-                        Funilaria e Pintura
-                    </label>
-                    <label class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" value="Elétrica">
-                        Elétrica
-                    </label>
-                </div>
-            </div>
+<main class="service-split-layout">
 
-            <!-- Coluna do Mapa e Resultados -->
-            <div class="col-lg-9">
-                <div id="mapa" class="map-container shadow-sm rounded mb-4"></div>
-                
-                <!-- Lista de Resultados -->
-                <div id="lista-resultados">
-                    <!-- O conteúdo será inserido dinamicamente aqui pelo script.js -->
+    <!-- Painel da Esquerda: Filtros e Resultados -->
+    <div class="results-pane">
+        <div class="p-4">
+            <h4>Filtrar Busca</h4>
+            <div class="list-group list-group-flush" id="filtros-servicos">
+                <label class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Mecânica Geral">
+                    Mecânica Geral
+                </label>
+                <label class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Borracharia">
+                    Borracharia
+                </label>
+                <label class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Funilaria e Pintura">
+                    Funilaria e Pintura
+                </label>
+                <label class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Elétrica">
+                    Elétrica
+                </label>
+            </div>
+        </div>
+
+        <hr class="my-0">
+
+        <!-- Controles de Ordenação e Lista de Resultados -->
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 id="results-count" class="mb-0"></h5>
+                <div class="d-flex align-items-center">
+                    <label for="sortBy" class="form-label me-2 mb-0 small">Ordenar por:</label>
+                    <select class="form-select form-select-sm" id="sortBy" style="width: auto;">
+                        <option value="distancia">Distância</option>
+                        <option value="avaliacao">Melhor Avaliação</option>
+                    </select>
                 </div>
             </div>
+            
+            <!-- A lista de resultados será inserida aqui -->
+            <div id="lista-resultados"></div>
         </div>
     </div>
+
+    <!-- Painel da Direita: Mapa -->
+    <div class="map-pane">
+        <div id="mapa" class="map-container"></div>
+    </div>
+
 </main>
