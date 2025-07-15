@@ -1,22 +1,55 @@
 <main class="auth-page">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-lg auth-card">
-                        <div class="card-body">
-                            <h2 class="card-title text-center mb-4">Criar Conta</h2>
-                            <form>
-                                <div class="mb-3"><label for="fullName" class="form-label">Nome Completo</label><input type="text" class="form-control" id="fullName" required></div>
-                                <div class="mb-3"><label for="email" class="form-label">Email</label><input type="email" class="form-control" id="email" required></div>
-                                <div class="mb-3"><label for="password" class="form-label">Senha</label><input type="password" class="form-control" id="password" required></div>
-                                <div class="mb-3"><label for="confirmPassword" class="form-label">Confirmar Senha</label><input type="password" class="form-control" id="confirmPassword" required></div>
-                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Cadastrar</button></div>
-                            </form>
-                            <hr class="my-4">
-                            <p class="text-center">Já tem uma conta? <a href="/login">Faça login</a></p>
-                        </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-lg auth-card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Criar Conta</h2>
+                        
+                        <!-- Div para mostrar mensagens de sucesso ou erro -->
+                        <div id="auth-message"></div>
+
+                        <!-- Formulário atualizado -->
+                        <form id="form-cadastro">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="fullName" name="nome_completo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Senha</label>
+                                <input type="password" class="form-control" id="password" name="senha" required>
+                            </div>
+
+                            <!-- Nova seleção de Tipo de Cliente -->
+                            <div class="mb-4">
+                                <label class="form-label">Tipo de Conta</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tipo_cliente" id="tipoCliente" value="cliente" checked>
+                                    <label class="form-check-label" for="tipoCliente">
+                                        Sou um cliente (Pessoa Física)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tipo_cliente" id="tipoParceiro" value="parceiro">
+                                    <label class="form-check-label" for="tipoParceiro">
+                                        Sou um parceiro (Oficina/Pessoa Jurídica)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+                            </div>
+                        </form>
+                        <hr class="my-4">
+                        <p class="text-center">Já tem uma conta? <a href="/login">Faça login</a></p>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
