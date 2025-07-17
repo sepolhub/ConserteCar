@@ -1,32 +1,15 @@
 <main class="service-split-layout">
-
-    <!-- Painel da Esquerda: Filtros e Resultados -->
     <div class="results-pane">
         <div class="p-4">
             <h4>Filtrar Busca</h4>
             <div class="list-group list-group-flush" id="filtros-servicos">
-                <label class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="Mecânica Geral">
-                    Mecânica Geral
-                </label>
-                <label class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="Borracharia">
-                    Borracharia
-                </label>
-                <label class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="Funilaria e Pintura">
-                    Funilaria e Pintura
-                </label>
-                <label class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="Elétrica">
-                    Elétrica
-                </label>
+                <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="Mecânica Geral"> Mecânica Geral</label>
+                <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="Borracharia"> Borracharia</label>
+                <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="Funilaria e Pintura"> Funilaria e Pintura</label>
+                <label class="list-group-item"><input class="form-check-input me-1" type="checkbox" value="Elétrica"> Elétrica</label>
             </div>
         </div>
-
         <hr class="my-0">
-
-        <!-- Controles de Ordenação e Lista de Resultados -->
         <div class="p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 id="results-count" class="mb-0"></h5>
@@ -38,15 +21,17 @@
                     </select>
                 </div>
             </div>
-            
-            <!-- A lista de resultados será inserida aqui -->
-            <div id="lista-resultados"></div>
+            <div id="lista-resultados">
+                <div class="text-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">A procurar...</span>
+                    </div>
+                    <p class="mt-2 text-muted">A procurar a sua localização...</p>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Painel da Direita: Mapa -->
     <div class="map-pane">
         <div id="mapa" class="map-container"></div>
     </div>
-
 </main>
