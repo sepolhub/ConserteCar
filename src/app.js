@@ -84,6 +84,21 @@ app.get('/cadastro', (req, res) => {
     });
 });
 
+// --- NOVA ROTA PARA A PÁGINA DE PERFIL ---
+app.get('/perfil', (req, res) => {
+    // Verifica se o utilizador está ligado antes de mostrar a página
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+
+    res.render('perfil', {
+        layout: 'layouts/main',
+        pageTitle: 'Meu Perfil - ConserteCar',
+        isLoggedIn: req.session.isLoggedIn,
+        user: req.session.user
+    });
+});
+
 // --- NOVA ROTA DE LOGOUT ---
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {

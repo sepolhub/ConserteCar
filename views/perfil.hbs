@@ -1,0 +1,33 @@
+<main class="section-padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h1 class="section-title text-dark">Meu Perfil</h1>
+                        <p class="lead">Olá, <strong>{{user.nome}}</strong>! Aqui você pode gerir as suas informações.</p>
+                        
+                        <hr class="my-4">
+
+                        <form>
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="nome" value="{{user.nome}}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="{{user.email}}" readonly>
+                                <div class="form-text">O seu email não pode ser alterado.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tipo" class="form-label">Tipo de Conta</label>
+                                <input type="text" class="form-control" id="tipo" value="{{user.tipo}}" readonly>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

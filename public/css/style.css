@@ -185,6 +185,27 @@ main.service-split-layout {
     box-shadow: 0 1px 5px rgba(0,0,0,0.4);
 }
 
+/* === ESTILOS PARA O DROPDOWN DO UTILIZADOR NO HEADER === */
+.main-header .dropdown-toggle::after {
+    color: white;
+}
+.main-header .dropdown-menu {
+    background-color: var(--consertecar-dark-bg);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.main-header .dropdown-item {
+    color: #f8f9fa;
+}
+.main-header .dropdown-item:hover {
+    background-color: var(--consertecar-primary);
+    color: white;
+}
+.main-header .dropdown-divider {
+    border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+
+
 /* --- Media Queries --- */
 @media (max-width: 992px) {
     .service-split-layout {
