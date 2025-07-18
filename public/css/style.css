@@ -111,6 +111,16 @@ a:hover > .service-card { transform: translateY(-8px); box-shadow: 0 10px 25px r
     padding: 2rem;
 }
 
+/* === NOVO: ESTILO PARA PÁGINAS DE CONTEÚDO CURTO (PERFIL, PAINEL) === */
+main.section-padding {
+    /* Garante que a página ocupe pelo menos a altura total da janela */
+    min-height: calc(100vh - 160px); /* Altura da viewport - (altura aproximada do header + footer) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza o conteúdo verticalmente */
+}
+
+
 /* === ESTILOS PARA A PÁGINA DE SERVIÇOS (ECRÃ DIVIDIDO) === */
 main.service-split-layout {
     padding: 0;
@@ -203,8 +213,6 @@ main.service-split-layout {
 .main-header .dropdown-divider {
     border-top-color: rgba(255, 255, 255, 0.15);
 }
-
-
 
 /* --- Media Queries --- */
 @media (max-width: 992px) {

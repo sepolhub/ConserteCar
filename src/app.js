@@ -45,9 +45,17 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+// --- NOVO: Middleware para proteger rotas de parceiros ---
+const requirePartnerLogin = (req, res, next) => {
+    if (req.session.isLoggedIn && req.session.user && req.session.user.tipo === 'parceiro') {
+        next(); // Se for um parceiro logado, continua
+    } else {
+        res.redirect('/login'); // Caso contrário, redireciona para o login
+    }
+};
+
 
 // --- ROTAS DAS PÁGINAS (Views) ---
-// Agora, passamos os dados da sessão para TODAS as rotas
 app.get('/', (req, res) => {
     res.render('index', {
         layout: 'layouts/main',
@@ -84,29 +92,30 @@ app.get('/cadastro', (req, res) => {
     });
 });
 
-// --- NOVA ROTA PARA A PÁGINA DE PERFIL ---
-app.get('/perfil', (req, res) => {
-    // Verifica se o utilizador está ligado antes de mostrar a página
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/login');
-    }
+// --- NOVA ROTA PARA O PAINEL DO PARCEIRO (PROTEGIDA) ---
+app.get('/painel', requirePartnerLogin, async (req, res) => {
+    try {
+        // Busca a oficina que pertence ao utilizador logado
+        const [oficinas] = await db.query('SELECT * FROM oficinas WHERE dono_id = ?', [req.session.user.id]);
+        
+        const oficina = oficinas.length > 0 ? oficinas[0] : null;
 
-    res.render('perfil', {
-        layout: 'layouts/main',
-        pageTitle: 'Meu Perfil - ConserteCar',
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user
-    });
+        res.render('painel', {
+            layout: 'layouts/main',
+            pageTitle: 'Painel do Parceiro - ConserteCar',
+            isLoggedIn: req.session.isLoggedIn,
+            user: req.session.user,
+            oficina: oficina // Envia os dados da oficina para a página
+        });
+    } catch (error) {
+        console.error("Erro ao carregar o painel:", error);
+        res.redirect('/');
+    }
 });
 
-// --- NOVA ROTA DE LOGOUT ---
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
-        if (err) {
-            // Se houver um erro ao destruir a sessão, redireciona mesmo assim
-            return res.redirect('/');
-        }
-        // Limpa o cookie do lado do cliente e redireciona
+        if (err) { return res.redirect('/'); }
         res.clearCookie('connect.sid');
         res.redirect('/');
     });
@@ -176,6 +185,7 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
+// --- ROTA DE LOGIN ATUALIZADA COM REDIRECIONAMENTO ---
 app.post('/login', async (req, res) => {
     try {
         const { email, senha } = req.body;
@@ -198,7 +208,15 @@ app.post('/login', async (req, res) => {
             tipo: user.tipo_cliente
         };
         req.session.isLoggedIn = true;
-        res.status(200).json({ success: true, message: 'Login bem-sucedido!' });
+
+        // --- LÓGICA DE REDIRECIONAMENTO ---
+        let redirectUrl = '/'; // Padrão: redireciona para a página inicial
+        if (user.tipo_cliente === 'parceiro') {
+            redirectUrl = '/painel'; // Se for parceiro, redireciona para o painel
+        }
+
+        res.status(200).json({ success: true, message: 'Login bem-sucedido!', redirectUrl: redirectUrl });
+
     } catch (error) {
         console.error("Erro no login:", error);
         res.status(500).json({ success: false, message: 'Ocorreu um erro no servidor.' });

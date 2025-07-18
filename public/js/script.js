@@ -243,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DO FORMULÁRIO DE LOGIN ---
     const formLogin = document.getElementById('form-login');
     if (formLogin) {
         formLogin.addEventListener('submit', async (event) => {
@@ -261,13 +260,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (result.success) {
                     authMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                    setTimeout(() => { window.location.href = '/'; }, 1500);
+                    // Redireciona para o URL enviado pelo servidor
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 1500);
                 } else {
                     authMessage.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
                 }
             } catch (error) {
                 console.error('Erro ao enviar formulário:', error);
-                authMessage.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+                authMessage.innerHTML = `<div class="alert alert-danger">Ocorreu um erro. Tente novamente.</div>`;
             }
         });
     }
