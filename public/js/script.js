@@ -273,4 +273,45 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- NOVA LÓGICA PARA O FORMULÁRIO DE EDIÇÃO DA OFICINA ---
+    const formEditarOficina = document.getElementById('form-editar-oficina');
+
+    if (formEditarOficina) {
+        formEditarOficina.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const editMessage = document.getElementById('edit-message');
+            const formData = new FormData(formEditarOficina);
+            const data = Object.fromEntries(formData.entries());
+
+            editMessage.innerHTML = '';
+
+            try {
+                const response = await fetch('/painel/editar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    editMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                    // Opcional: redirecionar de volta para o painel após alguns segundos
+                    setTimeout(() => {
+                        window.location.href = '/painel';
+                    }, 2000);
+                } else {
+                    editMessage.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                }
+
+            } catch (error) {
+                console.error('Erro ao atualizar oficina:', error);
+                editMessage.innerHTML = `<div class="alert alert-danger">Ocorreu um erro. Tente novamente.</div>`;
+            }
+        });
+    }
 });

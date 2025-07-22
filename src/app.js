@@ -45,7 +45,7 @@ app.use(session({
     cookie: { secure: false }
 }));
 
-// --- NOVO: Middleware para proteger rotas de parceiros ---
+// --- Middleware para proteger rotas de parceiros ---
 const requirePartnerLogin = (req, res, next) => {
     if (req.session.isLoggedIn && req.session.user && req.session.user.tipo === 'parceiro') {
         next(); // Se for um parceiro logado, continua
@@ -92,24 +92,51 @@ app.get('/cadastro', (req, res) => {
     });
 });
 
-// --- NOVA ROTA PARA O PAINEL DO PARCEIRO (PROTEGIDA) ---
+app.get('/perfil', (req, res) => {
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+    res.render('perfil', {
+        layout: 'layouts/main',
+        pageTitle: 'Meu Perfil - ConserteCar',
+        isLoggedIn: req.session.isLoggedIn,
+        user: req.session.user
+    });
+});
+
 app.get('/painel', requirePartnerLogin, async (req, res) => {
     try {
-        // Busca a oficina que pertence ao utilizador logado
         const [oficinas] = await db.query('SELECT * FROM oficinas WHERE dono_id = ?', [req.session.user.id]);
-        
         const oficina = oficinas.length > 0 ? oficinas[0] : null;
-
         res.render('painel', {
             layout: 'layouts/main',
-            pageTitle: 'Painel do Parceiro - ConserteCar',
+            pageTitle: 'Painel do Parceiro',
             isLoggedIn: req.session.isLoggedIn,
             user: req.session.user,
-            oficina: oficina // Envia os dados da oficina para a página
+            oficina: oficina
         });
     } catch (error) {
         console.error("Erro ao carregar o painel:", error);
         res.redirect('/');
+    }
+});
+
+app.get('/painel/editar', requirePartnerLogin, async (req, res) => {
+    try {
+        const [oficinas] = await db.query('SELECT * FROM oficinas WHERE dono_id = ?', [req.session.user.id]);
+        if (oficinas.length === 0) {
+            return res.redirect('/painel');
+        }
+        res.render('editar-oficina', {
+            layout: 'layouts/main',
+            pageTitle: 'Editar Oficina',
+            isLoggedIn: req.session.isLoggedIn,
+            user: req.session.user,
+            oficina: oficinas[0]
+        });
+    } catch (error) {
+        console.error("Erro ao carregar página de edição:", error);
+        res.redirect('/painel');
     }
 });
 
@@ -185,7 +212,6 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
-// --- ROTA DE LOGIN ATUALIZADA COM REDIRECIONAMENTO ---
 app.post('/login', async (req, res) => {
     try {
         const { email, senha } = req.body;
@@ -209,10 +235,9 @@ app.post('/login', async (req, res) => {
         };
         req.session.isLoggedIn = true;
 
-        // --- LÓGICA DE REDIRECIONAMENTO ---
-        let redirectUrl = '/'; // Padrão: redireciona para a página inicial
+        let redirectUrl = '/';
         if (user.tipo_cliente === 'parceiro') {
-            redirectUrl = '/painel'; // Se for parceiro, redireciona para o painel
+            redirectUrl = '/painel';
         }
 
         res.status(200).json({ success: true, message: 'Login bem-sucedido!', redirectUrl: redirectUrl });
@@ -223,9 +248,24 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.post('/painel/editar', requirePartnerLogin, async (req, res) => {
+    try {
+        const { nome, endereco } = req.body;
+        const dono_id = req.session.user.id;
+        await db.query(
+            'UPDATE oficinas SET nome = ?, endereco = ? WHERE dono_id = ?',
+            [nome, endereco, dono_id]
+        );
+        res.json({ success: true, message: 'Informações da oficina atualizadas com sucesso!' });
+    } catch (error) {
+        console.error("Erro ao atualizar oficina:", error);
+        res.status(500).json({ success: false, message: 'Ocorreu um erro no servidor.' });
+    }
+});
+
 
 // VAI COMEÇAR O SERVIDOR AQUI!
 app.listen(PORT, () => {
-    console.log(`Servidor ConserteCar rodando em http://localhost:${3000}`);
+    console.log(`Servidor ConserteCar rodando em http://localhost:${PORT}`);
     console.log('Pressione Ctrl+C para parar o servidor.');
 });
