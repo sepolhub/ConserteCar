@@ -65,15 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let userMarker = null;
         let markers = {};
 
-        function calcularDistancia(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
-
         function renderizarOficinas(listaDeOficinas) {
             const listaResultados = document.getElementById('lista-resultados');
             const resultsCount = document.getElementById('results-count');
@@ -189,24 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('lista-resultados').innerHTML = `<div class="alert alert-danger">Erro ao carregar oficinas.</div>`;
             }
         }
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLatLng = [position.coords.latitude, position.coords.longitude];
-                    userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(mapa).bindPopup('<b>Você está aqui!</b>').openPopup();
-                    mapa.setView(userLatLng, 14);
-                    iniciarPagina(userLatLng[0], userLatLng[1]);
-                },
-                () => {
-                    if(sortBySelect) sortBySelect.querySelector('option[value="distancia"]').disabled = true;
-                    iniciarPagina(); 
-                }
-            );
-        } else {
-            if(sortBySelect) sortBySelect.querySelector('option[value="distancia"]').disabled = true;
-            iniciarPagina();
-        }
+        
+        const coordenadasDeTeste = [-23.2028, -47.2881]; 
+        userMarker = L.marker(coordenadasDeTeste, { icon: userIcon }).addTo(mapa).bindPopup('<b>Você está aqui (Simulado)</b>').openPopup();
+        mapa.setView(coordenadasDeTeste, 14);
+        iniciarPagina(coordenadasDeTeste[0], coordenadasDeTeste[1]);
     }
 
     // --- LÓGICA DO FORMULÁRIO DE CADASTRO ---
@@ -243,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- LÓGICA DO FORMULÁRIO DE LOGIN ---
     const formLogin = document.getElementById('form-login');
     if (formLogin) {
         formLogin.addEventListener('submit', async (event) => {
@@ -260,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (result.success) {
                     authMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                    // Redireciona para o URL enviado pelo servidor
                     setTimeout(() => {
                         window.location.href = result.redirectUrl;
                     }, 1500);
@@ -274,17 +252,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- NOVA LÓGICA PARA O FORMULÁRIO DE EDIÇÃO DA OFICINA ---
-    const formEditarOficina = document.getElementById('form-editar-oficina');
+    // --- LÓGICA DINÂMICA PARA O FORMULÁRIO DE HORÁRIO ---
+    const secaoHorarios = document.querySelectorAll('.horario-dia');
+    if (secaoHorarios.length > 0) {
+        secaoHorarios.forEach(dia => {
+            const checkbox = dia.querySelector('.dia-checkbox');
+            const timeInputs = dia.querySelectorAll('.hora-input');
 
+            checkbox.addEventListener('change', () => {
+                // Ativa ou desativa os inputs de hora com base no checkbox
+                timeInputs.forEach(input => {
+                    input.disabled = !checkbox.checked;
+                    // Se o checkbox for desmarcado, limpa os valores
+                    if (!checkbox.checked) {
+                        input.value = '';
+                    }
+                });
+            });
+        });
+    }
+
+    // --- LÓGICA PARA O FORMULÁRIO DE EDIÇÃO DA OFICINA ---
+    const formEditarOficina = document.getElementById('form-editar-oficina');
     if (formEditarOficina) {
         formEditarOficina.addEventListener('submit', async (event) => {
             event.preventDefault();
-
             const editMessage = document.getElementById('edit-message');
             const formData = new FormData(formEditarOficina);
             const data = Object.fromEntries(formData.entries());
-
             editMessage.innerHTML = '';
 
             try {
@@ -295,23 +290,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: JSON.stringify(data),
                 });
-
                 const result = await response.json();
 
                 if (result.success) {
                     editMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                    // Opcional: redirecionar de volta para o painel após alguns segundos
                     setTimeout(() => {
                         window.location.href = '/painel';
                     }, 2000);
                 } else {
                     editMessage.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
                 }
-
             } catch (error) {
                 console.error('Erro ao atualizar oficina:', error);
                 editMessage.innerHTML = `<div class="alert alert-danger">Ocorreu um erro. Tente novamente.</div>`;
             }
         });
     }
+
+    // --- LÓGICA DO FORMULÁRIO DE APLICAÇÃO DE PARCEIRO (VERSÃO FINAL) ---
+    const formAplicarParceiro = document.getElementById('form-aplicar-parceiro');
+    if (formAplicarParceiro) {
+        formAplicarParceiro.addEventListener('submit', async (event) => { // Adicionado 'async'
+            event.preventDefault();
+            const formMessage = document.getElementById('form-message');
+            const formData = new FormData(formAplicarParceiro);
+            const data = Object.fromEntries(formData.entries());
+            formMessage.innerHTML = ''; // Limpa mensagens antigas
+
+            try {
+                // Envia os dados para a rota POST no back-end
+                const response = await fetch('/quero-ser-parceiro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    formMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                    formAplicarParceiro.reset();
+                } else {
+                    throw new Error(result.message);
+                }
+
+            } catch (error) {
+                formMessage.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        });
+    }
+    
 });

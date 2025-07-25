@@ -1,0 +1,180 @@
+{{! views/quero-ser-parceiro.hbs }}
+<main class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Aplique para ser um Parceiro</h2>
+                        <p class="text-center text-muted mb-4">Preencha os dados abaixo. Nossa equipe entrará em contato em breve após analisar sua aplicação.</p>
+
+                        <div id="form-message"></div>
+
+                        <form id="form-aplicar-parceiro">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="nome_oficina" class="form-label">Nome da Oficina</label>
+                                    <input type="text" class="form-control" name="nome_oficina" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cnpj" class="form-label">CNPJ</label>
+                                    <input type="text" class="form-control" name="cnpj" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefone" class="form-label">Telefone de Contato</label>
+                                    <input type="text" class="form-control" name="telefone" required>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="email" class="form-label">Email de Contato</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                    
+                                <div class="col-12">
+                                    <h5 class="mt-4">Endereço da Oficina</h5>
+                                    <hr>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="cep" class="form-label">CEP</label>
+                                    <input type="text" class="form-control" id="cep" name="cep" required>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="logradouro" class="form-label">Rua / Logradouro</label>
+                                    <input type="text" class="form-control" id="logradouro" name="logradouro" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="numero" class="form-label">Número</label>
+                                    <input type="text" class="form-control" id="numero" name="numero" required>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="complemento" class="form-label">Complemento (Opcional)</label>
+                                    <input type="text" class="form-control" id="complemento" name="complemento">
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro" required>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="estado" class="form-label">Estado (UF)</label>
+                                    <input type="text" class="form-control" id="estado" name="estado" placeholder="SP" maxlength="2" required>
+                                </div>
+                                
+                                <div class="col-md-12 mb-3">
+                                    <label for="nome_responsavel" class="form-label">Nome do Responsável</label>
+                                    <input type="text" class="form-control" name="nome_responsavel" required>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label class="form-label fw-bold">Horário de Funcionamento</label>
+                                    <div class="p-3 border rounded-3 bg-light">
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Segunda" id="seg"><label class="form-check-label" for="seg">Segunda-feira</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="segunda_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="segunda_fecha" disabled></div>
+                                        </div>
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Terça" id="ter"><label class="form-check-label" for="ter">Terça-feira</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="terca_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="terca_fecha" disabled></div>
+                                        </div>
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Quarta" id="qua"><label class="form-check-label" for="qua">Quarta-feira</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="quarta_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="quarta_fecha" disabled></div>
+                                        </div>
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Quinta" id="qui"><label class="form-check-label" for="qui">Quinta-feira</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="quinta_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="quinta_fecha" disabled></div>
+                                        </div>
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Sexta" id="sex"><label class="form-check-label" for="sex">Sexta-feira</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="sexta_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="sexta_fecha" disabled></div>
+                                        </div>
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Sábado" id="sab"><label class="form-check-label" for="sab">Sábado</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="sabado_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="sabado_fecha" disabled></div>
+                                        </div>
+                                        <div class="row align-items-center mb-2 horario-dia">
+                                            <div class="col-lg-3 col-md-4 col-5"><div class="form-check"><input class="form-check-input dia-checkbox" type="checkbox" name="dias_semana" value="Domingo" id="dom"><label class="form-check-label" for="dom">Domingo</label></div></div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="domingo_abre" disabled></div>
+                                            <div class="col-auto text-center">às</div>
+                                            <div class="col"><input type="time" class="form-control hora-input" name="domingo_fecha" disabled></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12 mb-3">
+                                    <label for="website" class="form-label">Website ou Rede Social (Opcional)</label>
+                                    <input type="text" class="form-control" name="website">
+                                </div>
+                                
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Principais Especialidades</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="especialidades" value="Mecânica Geral" id="mec">
+                                        <label class="form-check-label" for="mec">Mecânica Geral</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="especialidades" value="Elétrica" id="ele">
+                                        <label class="form-check-label" for="ele">Elétrica</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="especialidades" value="Funilaria e Pintura" id="fun">
+                                        <label class="form-check-label" for="fun">Funilaria e Pintura</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="especialidades" value="Borracharia" id="bor">
+                                        <label class="form-check-label" for="bor">Borracharia</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="descricao" class="form-label">Descrição da Oficina</label>
+                                    <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Conte um pouco sobre a história e os diferenciais da sua oficina..."></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Formas de Pagamento Aceites</label>
+                                    <div class="d-flex flex-wrap">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="checkbox" name="formas_pagamento" value="Cartão de Crédito" id="credito">
+                                            <label class="form-check-label" for="credito">Cartão de Crédito</label>
+                                        </div>
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="checkbox" name="formas_pagamento" value="PIX" id="pix">
+                                            <label class="form-check-label" for="pix">PIX</label>
+                                        </div>
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="checkbox" name="formas_pagamento" value="Dinheiro" id="dinheiro">
+                                            <label class="form-check-label" for="dinheiro">Dinheiro</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12 mb-3">
+                                    <label for="mensagem" class="form-label">Mensagem (Opcional)</label>
+                                    <textarea class="form-control" name="mensagem" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">Enviar Aplicação</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
