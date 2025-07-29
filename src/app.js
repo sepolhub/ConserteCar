@@ -59,6 +59,16 @@ app.use(session({
     }
 }));
 
+// --- NOVO MIDDLEWARE DE CONTEXTO DO UTILIZADOR ---
+app.use((req, res, next) => {
+    if (req.session.user) {
+        res.locals.user = req.session.user;
+        res.locals.isLoggedIn = req.session.isLoggedIn;
+        res.locals.user.isPartner = (req.session.user.tipo === 'parceiro');
+    }
+    next();
+});
+
 
 // --- Middleware para proteger rotas de parceiros ---
 const requirePartnerLogin = (req, res, next) => {
@@ -74,36 +84,28 @@ const requirePartnerLogin = (req, res, next) => {
 app.get('/', (req, res) => {
     res.render('index', {
         layout: 'layouts/main',
-        pageTitle: 'ConserteCar - Seu Guia Automotivo',
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user
+        pageTitle: 'ConserteCar - Seu Guia Automotivo'
     });
 });
 
 app.get('/servicos', (req, res) => {
     res.render('servicos', {
         layout: 'layouts/main',
-        pageTitle: 'Encontrar Serviços - ConserteCar',
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user
+        pageTitle: 'Encontrar Serviços - ConserteCar'
     });
 });
 
 app.get('/login', (req, res) => {
     res.render('login', {
         layout: 'layouts/main',
-        pageTitle: 'Login - ConserteCar',
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user
+        pageTitle: 'Login - ConserteCar'
     });
 });
 
 app.get('/cadastro', (req, res) => {
     res.render('cadastro', {
         layout: 'layouts/main',
-        pageTitle: 'Cadastro - ConserteCar',
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user
+        pageTitle: 'Cadastro - ConserteCar'
     });
 });
 
@@ -113,9 +115,7 @@ app.get('/perfil', (req, res) => {
     }
     res.render('perfil', {
         layout: 'layouts/main',
-        pageTitle: 'Meu Perfil - ConserteCar',
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user
+        pageTitle: 'Meu Perfil - ConserteCar'
     });
 });
 
@@ -126,8 +126,6 @@ app.get('/painel', requirePartnerLogin, async (req, res) => {
         res.render('painel', {
             layout: 'layouts/main',
             pageTitle: 'Painel do Parceiro',
-            isLoggedIn: req.session.isLoggedIn,
-            user: req.session.user,
             oficina: oficina
         });
     } catch (error) {
@@ -145,8 +143,6 @@ app.get('/painel/editar', requirePartnerLogin, async (req, res) => {
         res.render('editar-oficina', {
             layout: 'layouts/main',
             pageTitle: 'Editar Oficina',
-            isLoggedIn: req.session.isLoggedIn,
-            user: req.session.user,
             oficina: oficinas[0]
         });
     } catch (error) {
@@ -170,40 +166,78 @@ app.get('/quero-ser-parceiro', (req, res) => {
     });
 });
 
+app.get('/aguarde-aprovacao', (req, res) => {
+    res.render('aguarde-aprovacao', {
+        layout: 'layouts/main',
+        pageTitle: 'Aplicação Recebida - ConserteCar'
+    });
+});
+
 // --- ROTAS DE API ---
 app.get('/api/oficinas', async (req, res) => {
     try {
-        const { lat, lon } = req.query;
-        const raio_km = 50;
-        let query;
+        const { lat, lon, servicos, ordenarPor } = req.query;
+        const raio_km = 50; 
+
+        // --- INÍCIO DA DEPURAÇÃO ---
+        console.log("\n--- NOVA REQUISIÇÃO PARA /api/oficinas ---");
+        console.log("Filtros recebidos:", { lat, lon, servicos, ordenarPor });
+        // --- FIM DA DEPURAÇÃO ---
+
         let queryParams = [];
-        if (lat && lon) {
-            query = `
-                SELECT 
-                    o.id, o.nome, o.cep, o.logradouro, o.numero, o.bairro, o.cidade, o.estado, o.lat, o.lon, o.rating, o.imagem_url as img,
-                    (6371 * acos(cos(radians(?)) * cos(radians(o.lat)) * cos(radians(o.lon) - radians(?)) + sin(radians(?)) * sin(radians(o.lat)))) AS distancia,
-                    (SELECT GROUP_CONCAT(servico_nome SEPARATOR ', ') FROM servicos_oficina WHERE oficina_id = o.id) as servicos
-                FROM oficinas o
-                WHERE o.status = 'aprovado'
-                HAVING distancia < ?
-                ORDER BY distancia;
-            `;
-            queryParams = [lat, lon, lat, raio_km];
-        } else {
-            query = `
-                SELECT o.id, o.nome, o.cep, o.logradouro, o.numero, o.bairro, o.cidade, o.estado, o.lat, o.lon, o.rating, o.imagem_url as img, 
-                       (SELECT GROUP_CONCAT(servico_nome SEPARATOR ', ') FROM servicos_oficina WHERE oficina_id = o.id) as servicos
-                FROM oficinas o
-                WHERE o.status = 'aprovado'
-                GROUP BY o.id;
-            `;
+        let whereClauses = ["o.status = 'aprovado'"];
+        
+        if (servicos) {
+            const listaServicos = servicos.split(',');
+            whereClauses.push(`
+                EXISTS (
+                    SELECT 1 FROM servicos_oficina so 
+                    WHERE so.oficina_id = o.id AND so.servico_nome IN (?)
+                )
+            `);
+            queryParams.push(listaServicos);
         }
+
+        let query = `
+            SELECT 
+                o.id, o.nome, o.status, o.lat, o.lon, o.rating, 
+                (SELECT GROUP_CONCAT(so.servico_nome SEPARATOR ', ') FROM servicos_oficina so WHERE so.oficina_id = o.id) as servicos
+                ${lat && lon ? `, (6371 * acos(cos(radians(?)) * cos(radians(o.lat)) * cos(radians(o.lon) - radians(?)) + sin(radians(?)) * sin(radians(o.lat)))) AS distancia` : ''}
+            FROM oficinas o
+            WHERE ${whereClauses.join(' AND ')}
+        `;
+
+        if (lat && lon) {
+            queryParams.unshift(lat, lon, lat);
+            query += ` HAVING distancia < ?`;
+            queryParams.push(raio_km);
+        }
+
+        if (ordenarPor === 'avaliacao') {
+            query += ` ORDER BY o.rating DESC`;
+        } else if (lat && lon) {
+            query += ` ORDER BY distancia ASC`;
+        }
+
+        // --- INÍCIO DA DEPURAÇÃO ---
+        console.log("Query SQL a ser executada:", query);
+        console.log("Parâmetros da Query:", queryParams);
+        // --- FIM DA DEPURAÇÃO ---
+
         const [oficinas] = await db.query(query, queryParams);
+        
+        // --- INÍCIO DA DEPURAÇÃO ---
+        console.log(`Resultado bruto da base de dados: Encontradas ${oficinas.length} oficinas.`);
+        console.log(oficinas);
+        // --- FIM DA DEPURAÇÃO ---
+        
         const oficinasComServicosArray = oficinas.map(oficina => ({
             ...oficina,
             servicos: oficina.servicos ? oficina.servicos.split(', ') : []
         }));
+
         res.json(oficinasComServicosArray);
+
     } catch (error) {
         console.error("Erro ao buscar oficinas:", error);
         res.status(500).json({ error: 'Erro ao conectar-se à base de dados.' });
@@ -245,106 +279,99 @@ app.post('/login', async (req, res) => {
         if (!email || !senha) {
             return res.status(400).json({ success: false, message: 'Email e senha são obrigatórios.' });
         }
+        
         const [users] = await db.query('SELECT * FROM clientes WHERE email = ?', [email]);
         if (users.length === 0) {
             return res.status(401).json({ success: false, message: 'Email ou senha inválidos.' });
         }
+        
         const user = users[0];
         const senhaCorreta = await bcrypt.compare(senha, user.senha);
         if (!senhaCorreta) {
             return res.status(401).json({ success: false, message: 'Email ou senha inválidos.' });
         }
-        req.session.user = {
-            id: user.id,
-            nome: user.nome_completo,
-            email: user.email,
-            tipo: user.tipo_cliente
-        };
-        req.session.isLoggedIn = true;
-        let redirectUrl = '/';
+
         if (user.tipo_cliente === 'parceiro') {
-            redirectUrl = '/painel';
+            const [oficinas] = await db.query('SELECT status FROM oficinas WHERE dono_id = ?', [user.id]);
+            if (oficinas.length === 0 || oficinas[0].status !== 'aprovado') {
+                return res.status(403).json({ success: false, message: 'A sua conta de parceiro ainda está pendente de aprovação.' });
+            }
         }
+
+        req.session.user = { id: user.id, nome: user.nome_completo, email: user.email, tipo: user.tipo_cliente };
+        req.session.isLoggedIn = true;
+
+        let redirectUrl = (user.tipo_cliente === 'parceiro') ? '/painel' : '/';
         res.status(200).json({ success: true, message: 'Login bem-sucedido!', redirectUrl: redirectUrl });
+
     } catch (error) {
         console.error("Erro no login:", error);
         res.status(500).json({ success: false, message: 'Ocorreu um erro no servidor.' });
     }
 });
 
-// --- ROTA PARA PROCESSAR A APLICAÇÃO DE PARCEIRO (ATUALIZADA) ---
 app.post('/quero-ser-parceiro', async (req, res) => {
-    // Recebe todos os campos do formulário
-    const { 
-        nome_oficina, cnpj, telefone, email, mensagem, nome_responsavel, website, especialidades,
-        descricao, formas_pagamento,
-        cep, logradouro, numero, bairro, cidade, estado,
-        ...horarios
-    } = req.body;
-
+    const connection = await db.getConnection();
     try {
-        // --- ETAPA 1: GEOCODIFICAÇÃO (CONVERTER ENDEREÇO EM COORDENADAS) ---
+        await connection.beginTransaction();
+
+        const { nome_completo, email, senha, ...dadosOficina } = req.body;
         
-        const enderecoCompleto = `${logradouro}, ${numero}, ${bairro}, ${cidade}, ${estado}, Brasil`;
-        const urlApiNominatim = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoCompleto)}`;
-
-        let lat = null;
-        let lon = null;
-
-        const geoResponse = await fetch(urlApiNominatim, {
-            headers: { 'User-Agent': 'ConserteCarApp/1.0 (seuemail@exemplo.com)' } // Lembre-se de trocar pelo seu email
-        });
-
-        if (!geoResponse.ok) {
-            console.warn('Aviso: Serviço de geocodificação indisponível ou com erro.');
-        } else {
-            const geoData = await geoResponse.json();
-            if (geoData && geoData.length > 0) {
-                lat = geoData[0].lat;
-                lon = geoData[0].lon;
-                console.log(`Endereço "${enderecoCompleto}" geocodificado para: Lat ${lat}, Lon ${lon}`);
-            } else {
-                console.warn(`AVISO: Endereço "${enderecoCompleto}" não foi encontrado pela geocodificação.`);
-            }
+        if (!nome_completo || !email || !senha) {
+            throw new Error('Nome, email e senha são obrigatórios.');
         }
 
-        // --- ETAPA 2: SALVAR OS DADOS NO BANCO DE DADOS (AGORA COM LAT E LON) ---
+        const [users] = await connection.query('SELECT id FROM clientes WHERE email = ?', [email]);
+        if (users.length > 0) {
+            throw new Error('Este email já está a ser utilizado.');
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const senhaEncriptada = await bcrypt.hash(senha, salt);
+
+        const [resultCliente] = await connection.query(
+            'INSERT INTO clientes (nome_completo, email, senha, tipo_cliente) VALUES (?, ?, ?, ?)',
+            [nome_completo, email, senhaEncriptada, 'parceiro']
+        );
+        const novoDonoId = resultCliente.insertId;
+
+        const { logradouro, numero, cidade, estado } = dadosOficina;
+        const enderecoCompleto = `${logradouro}, ${numero}, ${cidade}, ${estado}, Brasil`;
+        const urlApi = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoCompleto)}`;
+        let lat = null, lon = null;
         
+        const geoResponse = await fetch(urlApi, { headers: { 'User-Agent': 'ConserteCarApp/1.0 (seuemail@exemplo.com)' } });
+        const geoData = await geoResponse.json();
+        if (geoData && geoData.length > 0) {
+            lat = geoData[0].lat;
+            lon = geoData[0].lon;
+        }
+
+        const { nome_oficina, cnpj, telefone, cep, bairro, complemento, nome_responsavel, website, especialidades, formas_pagamento, descricao, ...horarios } = dadosOficina;
         const especialidadesFormatado = Array.isArray(especialidades) ? especialidades.join(', ') : especialidades;
         const pagamentosFormatado = Array.isArray(formas_pagamento) ? formas_pagamento.join(', ') : formas_pagamento;
         const horariosJSON = JSON.stringify(horarios);
 
-        // Query INSERT atualizada para incluir lat e lon
-        await db.query(
-            `INSERT INTO oficinas (nome, cnpj, telefone, email, cep, logradouro, numero, bairro, cidade, estado, lat, lon, nome_responsavel, website, especialidades, formas_pagamento, descricao, horario_funcionamento, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente')`,
-            [nome_oficina, cnpj, telefone, email, cep, logradouro, numero, bairro, cidade, estado, lat, lon, nome_responsavel, website, especialidadesFormatado, pagamentosFormatado, descricao, horariosJSON]
+        await connection.query(
+            `INSERT INTO oficinas (dono_id, nome, cnpj, telefone, email, cep, logradouro, numero, complemento, bairro, cidade, estado, lat, lon, nome_responsavel, website, especialidades, formas_pagamento, descricao, horario_funcionamento, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente')`,
+            [novoDonoId, nome_oficina, cnpj, telefone, email, cep, logradouro, numero, complemento, bairro, cidade, estado, lat, lon, nome_responsavel, website, especialidadesFormatado, pagamentosFormatado, descricao, horariosJSON]
         );
 
-        // --- ETAPA 3: ENVIAR O EMAIL DE NOTIFICAÇÃO ---
-        
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-        
-        const mailOptions = {
-            from: `Plataforma ConserteCar <${process.env.EMAIL_USER}>`,
-            to: process.env.EMAIL_USER,
-            subject: 'Nova Aplicação de Parceiro PENDENTE DE APROVAÇÃO!',
-            html: `<h1>Nova aplicação recebida e guardada no sistema.</h1><p>Acesse o painel de administração para rever e aprovar.</p>`
-        };
+        await connection.commit();
 
+        const transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS } });
+        const mailOptions = { from: `Plataforma ConserteCar <${process.env.EMAIL_USER}>`, to: process.env.EMAIL_USER, subject: 'Novo Registo de Parceiro PENDENTE!', html: `<h1>Novo registo de parceiro recebido.</h1><p>Acesse o painel de administração para rever e aprovar a oficina: ${nome_oficina}.</p>` };
         await transporter.sendMail(mailOptions);
         
-        res.status(200).json({ success: true, message: 'Aplicação enviada com sucesso! A sua oficina está em análise.' });
+        res.status(201).json({ success: true, message: 'Registo realizado! A sua conta será revista e aprovada em breve.' });
 
     } catch (error) {
-        console.error('Erro na aplicação de parceiro:', error);
-        res.status(500).json({ success: false, message: 'Ocorreu um erro ao processar a sua aplicação.' });
+        await connection.rollback();
+        console.error('Erro no registo de parceiro:', error);
+        res.status(500).json({ success: false, message: error.message || 'Ocorreu um erro no servidor.' });
+    } finally {
+        connection.release();
     }
 });
 

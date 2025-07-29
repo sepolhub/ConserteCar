@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
          const userIcon = L.divIcon({
             html: '<i class="bi bi-geo-alt-fill user-location-icon"></i>',
-            className: 'custom-map-icon', // Classe para remover estilos padrão do Leaflet
+            className: 'custom-map-icon',
             iconSize: [30, 30],
             iconAnchor: [15, 30]
         });
@@ -89,21 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const pontoOficina = [oficina.lat, oficina.lon];
-                pontosParaZoom.push(pontoOficina);
-                const marker = L.marker(pontoOficina, { icon: workshopIcon }).addTo(mapa).bindPopup(`<b>${oficina.nome}</b>`);
-                marker.oficinaId = oficina.id;
-                markers[oficina.id] = marker;
-
-                marker.on('click', function () {
-                    document.querySelectorAll('.result-card').forEach(c => c.classList.remove('result-card-highlight'));
-                    const cardSelecionado = document.querySelector(`.result-card[data-id="${this.oficinaId}"]`);
-                    if (cardSelecionado) {
-                        cardSelecionado.classList.add('result-card-highlight');
-                        cardSelecionado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                });
-
+                // A lógica para criar o HTML das estrelas e da distância precisa estar ANTES
+                // de ser usada no pop-up e no card.
                 let ratingHtml = '';
                 const ratingNum = parseFloat(oficina.rating);
                 if (!isNaN(ratingNum)) {
@@ -119,9 +106,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let distanciaHtml = oficina.distancia ? `<span class="text-muted small">${oficina.distancia.toFixed(1)} km</span>` : '';
                 
+                // ##### INÍCIO DA ALTERAÇÃO #####
+                const pontoOficina = [oficina.lat, oficina.lon];
+                pontosParaZoom.push(pontoOficina);
+
+                // 1. Construir o HTML para o conteúdo do pop-up
+                let popupContent = `
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 180px;">
+                        <h6 class="mb-1" style="font-weight: 700;">${oficina.nome}</h6>
+                        <p class="text-muted small mb-2" style="font-size: 0.8rem;">${oficina.logradouro || ''}, ${oficina.numero || ''} - ${oficina.bairro || ''}</p>
+                        <div class="rating-stars small mb-2" title="Avaliação: ${oficina.rating || 'N/A'} de 5">
+                            ${ratingHtml}
+                        </div>
+                        <a href="/oficina/${oficina.id}" class="btn btn-primary btn-sm w-100">Ver Detalhes</a>
+                    </div>
+                `;
+
+                // 2. Criar o marcador e associar o novo pop-up
+                const marker = L.marker(pontoOficina, { icon: workshopIcon })
+                    .addTo(mapa)
+                    .bindPopup(popupContent);
+                // ##### FIM DA ALTERAÇÃO #####
+                
+                marker.oficinaId = oficina.id;
+                markers[oficina.id] = marker;
+
+                marker.on('click', function () {
+                    document.querySelectorAll('.result-card').forEach(c => c.classList.remove('result-card-highlight'));
+                    const cardSelecionado = document.querySelector(`.result-card[data-id="${this.oficinaId}"]`);
+                    if (cardSelecionado) {
+                        cardSelecionado.classList.add('result-card-highlight');
+                        cardSelecionado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                });
+
                 const cardHtml = `
                     <div class="result-card" data-id="${oficina.id}">
-                        <img src="${oficina.img || '/images/placeholder.png'}" alt="${oficina.nome}" class="result-card-img">
+                        <img src="${oficina.imagem_url || '/images/placeholder.png'}" alt="${oficina.nome}" class="result-card-img">
                         <div class="result-card-body">
                             <h6 class="mb-1">${oficina.nome}</h6>
                             <div class="rating-stars small mb-1" title="Avaliação: ${oficina.rating || 'N/A'} de 5">
@@ -260,10 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeInputs = dia.querySelectorAll('.hora-input');
 
             checkbox.addEventListener('change', () => {
-                // Ativa ou desativa os inputs de hora com base no checkbox
                 timeInputs.forEach(input => {
                     input.disabled = !checkbox.checked;
-                    // Se o checkbox for desmarcado, limpa os valores
                     if (!checkbox.checked) {
                         input.value = '';
                     }
@@ -271,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-
+    
     // --- LÓGICA PARA O FORMULÁRIO DE EDIÇÃO DA OFICINA ---
     const formEditarOficina = document.getElementById('form-editar-oficina');
     if (formEditarOficina) {
@@ -307,33 +326,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DO FORMULÁRIO DE APLICAÇÃO DE PARCEIRO (VERSÃO FINAL) ---
+    // --- LÓGICA DO FORMULÁRIO DE APLICAÇÃO DE PARCEIRO ---
     const formAplicarParceiro = document.getElementById('form-aplicar-parceiro');
     if (formAplicarParceiro) {
-        formAplicarParceiro.addEventListener('submit', async (event) => { // Adicionado 'async'
+        formAplicarParceiro.addEventListener('submit', async (event) => {
             event.preventDefault();
             const formMessage = document.getElementById('form-message');
+            formMessage.innerHTML = '';
+
+            let isValid = true;
+            let errorMessage = '';
+
+            const especialidadesChecked = formAplicarParceiro.querySelectorAll('input[name="especialidades"]:checked');
+            if (especialidadesChecked.length === 0) {
+                isValid = false;
+                errorMessage += '<p>Por favor, selecione pelo menos uma especialidade.</p>';
+            }
+
+            const diasChecked = formAplicarParceiro.querySelectorAll('.dia-checkbox:checked');
+            if (diasChecked.length === 0) {
+                isValid = false;
+                errorMessage += '<p>Por favor, defina o horário para pelo menos um dia da semana.</p>';
+            } else {
+                diasChecked.forEach(diaCheckbox => {
+                    const diaRow = diaCheckbox.closest('.horario-dia');
+                    const abreInput = diaRow.querySelector('input[name*="_abre"]');
+                    const fechaInput = diaRow.querySelector('input[name*="_fecha"]');
+                    if (!abreInput.value || !fechaInput.value) {
+                        isValid = false;
+                        errorMessage += `<p>Por favor, preencha o horário de abertura e fecho para ${diaCheckbox.value}.</p>`;
+                    }
+                });
+            }
+
+            if (!isValid) {
+                formMessage.innerHTML = `<div class="alert alert-danger">${errorMessage}</div>`;
+                return;
+            }
+
             const formData = new FormData(formAplicarParceiro);
             const data = Object.fromEntries(formData.entries());
-            formMessage.innerHTML = ''; // Limpa mensagens antigas
 
             try {
-                // Envia os dados para a rota POST no back-end
                 const response = await fetch('/quero-ser-parceiro', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-
                 const result = await response.json();
-
-                if (result.success) {
-                    formMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                    formAplicarParceiro.reset();
-                } else {
-                    throw new Error(result.message);
-                }
-
+                 window.location.href = '/aguarde-aprovacao';
             } catch (error) {
                 formMessage.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
             }

@@ -5,13 +5,34 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-lg">
                     <div class="card-body">
-                        <h2 class="card-title text-center mb-4">Aplique para ser um Parceiro</h2>
-                        <p class="text-center text-muted mb-4">Preencha os dados abaixo. Nossa equipe entrará em contato em breve após analisar sua aplicação.</p>
+                        <h2 class="card-title text-center mb-4">Registo de Parceiro</h2>
+                        <p class="text-center text-muted mb-4">Crie sua conta e registe a sua oficina. O acesso será liberado após a nossa aprovação.</p>
 
                         <div id="form-message"></div>
 
                         <form id="form-aplicar-parceiro">
                             <div class="row">
+                                
+                                <div class="col-12">
+                                    <h5 class="mt-2">Seus Dados de Acesso</h5>
+                                    <hr>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="nome_completo" class="form-label">Seu Nome Completo (do Gestor)</label>
+                                    <input type="text" class="form-control" name="nome_completo" required>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="email" class="form-label">Seu Email de Acesso</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="senha" class="form-label">Crie uma Senha</label>
+                                    <input type="password" class="form-control" name="senha" required>
+                                </div>
+                                <div class="col-12">
+                                    <h5 class="mt-4">Dados da Oficina</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-md-12 mb-3">
                                     <label for="nome_oficina" class="form-label">Nome da Oficina</label>
                                     <input type="text" class="form-control" name="nome_oficina" required>
@@ -23,10 +44,6 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="telefone" class="form-label">Telefone de Contato</label>
                                     <input type="text" class="form-control" name="telefone" required>
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <label for="email" class="form-label">Email de Contato</label>
-                                    <input type="email" class="form-control" name="email" required>
                                 </div>
                                     
                                 <div class="col-12">
@@ -63,10 +80,10 @@
                                 </div>
                                 
                                 <div class="col-md-12 mb-3">
-                                    <label for="nome_responsavel" class="form-label">Nome do Responsável</label>
-                                    <input type="text" class="form-control" name="nome_responsavel" required>
+                                    <label for="nome_responsavel" class="form-label">Nome do Responsável (se diferente do gestor)</label>
+                                    <input type="text" class="form-control" name="nome_responsavel">
                                 </div>
-                                
+                                 
                                 <div class="col-12 mb-3">
                                     <label class="form-label fw-bold">Horário de Funcionamento</label>
                                     <div class="p-3 border rounded-3 bg-light">
@@ -169,7 +186,7 @@
                                 </div>
                             </div>
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg">Enviar Aplicação</button>
+                                <button type="submit" class="btn btn-primary btn-lg">Finalizar Registo</button>
                             </div>
                         </form>
                     </div>
