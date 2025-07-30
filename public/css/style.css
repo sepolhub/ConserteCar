@@ -56,11 +56,6 @@ body {
 /* --- Secções da Página Inicial --- */
 #cta-parceiros { background-color: #f8f9fa; background-image: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%); }
 .service-card-img, .dicas-card-img { height: 180px; object-fit: cover; }
-.service-card { transition: all 0.3s ease; }
-a:hover > .service-card { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
-.service-card-danger .service-card { background-color: var(--bs-danger); color: white; border-color: var(--bs-danger); }
-.service-card-danger .card-title, .service-card-danger .card-text { color: white; }
-.service-card-danger:hover .service-card { background-color: #a71c27; }
 .case-card { background-color: #fff; border: 3px solid var(--consertecar-primary); padding: 1rem; box-shadow: 0 4px 15px rgba(0, 0, 0, .08); transition: all .4s cubic-bezier(.175, .885, .32, 1.275); border-radius: 45% 55% 60% 40%/55% 45% 55% 45%; }
 .case-card:hover { transform: translateY(-10px) rotate(1.5deg); box-shadow: 0 15px 30px rgba(0, 0, 0, .12); border-radius: 55% 45% 55% 45%/45% 55% 45% 55%; }
 .case-card-image { height: 200px; border-radius: inherit; overflow: hidden; margin-bottom: 1rem; }
@@ -113,11 +108,10 @@ a:hover > .service-card { transform: translateY(-8px); box-shadow: 0 10px 25px r
 
 /* === NOVO: ESTILO PARA PÁGINAS DE CONTEÚDO CURTO (PERFIL, PAINEL) === */
 main.section-padding {
-    /* Garante que a página ocupe pelo menos a altura total da janela */
-    min-height: calc(100vh - 160px); /* Altura da viewport - (altura aproximada do header + footer) */
+    min-height: calc(100vh - 160px); 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centraliza o conteúdo verticalmente */
+    justify-content: center;
 }
 
 
@@ -212,6 +206,129 @@ main.service-split-layout {
 }
 .main-header .dropdown-divider {
     border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+/* --- ESTILOS PARA CARDS DE SERVIÇO (VERSÃO OBJECT-FIT CORRIGIDA) --- */
+.service-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    height: 330px;
+    text-decoration: none;
+    background-color: #333;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    display: block; /* Garante que o <a> se comporte como um bloco */
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.service-card-img-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.service-card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--card-img-position, center);
+    transition: transform 0.4s ease;
+}
+
+.service-card:hover .service-card-img-container img {
+    transform: scale(1.08);
+}
+
+.service-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+    z-index: 2;
+    transition: height 0.4s ease;
+}
+
+.service-card .card-body {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 3;
+    padding: 1.5rem;
+    color: white;
+}
+
+.service-card .card-title {
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    margin-bottom: 0.5rem;
+}
+
+.service-card .card-text {
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    font-weight: 300;
+}
+
+.service-card-danger {
+    background-color: var(--bs-danger);
+}
+
+.service-card.text-only {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.service-card.text-only .card-body {
+    position: static;
+    color: #212529;
+}
+
+.service-card.text-only .card-title {
+    color: #212529;
+    text-shadow: none;
+}
+
+.service-card.text-only .card-text {
+    color: #6c757d;
+    text-shadow: none;
+}
+
+.service-card.text-only::after,
+.service-card.text-only .service-card-img-container {
+    display: none;
+}
+
+/* --- Animação de Scroll (Fade In) --- */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- AJUSTE DE ESPAÇAMENTO PARA A SECÇÃO DE SERVIÇOS --- */
+#servicos {
+    padding-top: 40px;
+    padding-bottom: 60px;
 }
 
 /* --- Media Queries --- */
