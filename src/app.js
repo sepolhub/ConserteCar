@@ -33,6 +33,11 @@ app.set('views', viewsPath);
 hbs.registerPartials(partialsPath);
 hbs.registerPartials(layoutsPath);
 
+// Regista um "helper" para converter objetos para JSON nas views
+hbs.registerHelper('json', function(context) {
+    return JSON.stringify(context);
+});
+
 // --- Configuração da pasta de arquivos estáticos ---
 app.use(express.static(publicDirectoryPath));
 
@@ -109,14 +114,34 @@ app.get('/cadastro', (req, res) => {
     });
 });
 
-app.get('/perfil', (req, res) => {
+app.get('/perfil', async (req, res) => { // Adicionado 'async'
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
-    res.render('perfil', {
-        layout: 'layouts/main',
-        pageTitle: 'Meu Perfil - ConserteCar'
-    });
+
+    try {
+        // BUSCA OS DADOS MAIS FRESCOS DO BANCO DE DADOS
+        const userId = req.session.user.id;
+        const [users] = await db.query('SELECT * FROM clientes WHERE id = ?', [userId]);
+
+        if (users.length === 0) {
+            // Se o utilizador não for encontrado por algum motivo, faz logout por segurança
+            return req.session.destroy(() => res.redirect('/login'));
+        }
+
+        const a_user = users[0];
+
+        // Renderiza a página com os dados atualizados
+        res.render('perfil', {
+            layout: 'layouts/main',
+            pageTitle: 'Meu Perfil - ConserteCar',
+            user: a_user // Passa o objeto de utilizador completo e atualizado para a view
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar o perfil:", error);
+        res.redirect('/'); // Em caso de erro, volta para a página inicial
+    }
 });
 
 app.get('/painel', requirePartnerLogin, async (req, res) => {
@@ -178,12 +203,6 @@ app.get('/api/oficinas', async (req, res) => {
     try {
         const { lat, lon, servicos, ordenarPor } = req.query;
         const raio_km = 50; 
-
-        // --- INÍCIO DA DEPURAÇÃO ---
-        console.log("\n--- NOVA REQUISIÇÃO PARA /api/oficinas ---");
-        console.log("Filtros recebidos:", { lat, lon, servicos, ordenarPor });
-        // --- FIM DA DEPURAÇÃO ---
-
         let queryParams = [];
         let whereClauses = ["o.status = 'aprovado'"];
         
@@ -198,14 +217,18 @@ app.get('/api/oficinas', async (req, res) => {
             queryParams.push(listaServicos);
         }
 
+        // --- INÍCIO DA CORREÇÃO: SELECT COM TODOS OS CAMPOS NECESSÁRIOS ---
         let query = `
             SELECT 
-                o.id, o.nome, o.status, o.lat, o.lon, o.rating, 
+                o.id, o.nome, o.status, o.lat, o.lon, o.rating,
+                o.cep, o.logradouro, o.numero, o.bairro, o.cidade, o.estado,
+                o.imagem_url as img,
                 (SELECT GROUP_CONCAT(so.servico_nome SEPARATOR ', ') FROM servicos_oficina so WHERE so.oficina_id = o.id) as servicos
                 ${lat && lon ? `, (6371 * acos(cos(radians(?)) * cos(radians(o.lat)) * cos(radians(o.lon) - radians(?)) + sin(radians(?)) * sin(radians(o.lat)))) AS distancia` : ''}
             FROM oficinas o
             WHERE ${whereClauses.join(' AND ')}
         `;
+        // --- FIM DA CORREÇÃO ---
 
         if (lat && lon) {
             queryParams.unshift(lat, lon, lat);
@@ -219,17 +242,7 @@ app.get('/api/oficinas', async (req, res) => {
             query += ` ORDER BY distancia ASC`;
         }
 
-        // --- INÍCIO DA DEPURAÇÃO ---
-        console.log("Query SQL a ser executada:", query);
-        console.log("Parâmetros da Query:", queryParams);
-        // --- FIM DA DEPURAÇÃO ---
-
         const [oficinas] = await db.query(query, queryParams);
-        
-        // --- INÍCIO DA DEPURAÇÃO ---
-        console.log(`Resultado bruto da base de dados: Encontradas ${oficinas.length} oficinas.`);
-        console.log(oficinas);
-        // --- FIM DA DEPURAÇÃO ---
         
         const oficinasComServicosArray = oficinas.map(oficina => ({
             ...oficina,
@@ -377,19 +390,87 @@ app.post('/quero-ser-parceiro', async (req, res) => {
 
 app.post('/painel/editar', requirePartnerLogin, async (req, res) => {
     try {
-        const { nome, endereco } = req.body;
         const dono_id = req.session.user.id;
+        
+        // 1. Recebemos TODOS os campos do formulário explicitamente
+        const { 
+            nome, cnpj, telefone, email, nome_responsavel,
+            cep, logradouro, numero, complemento, bairro, cidade, estado,
+            website, especialidades, formas_pagamento, descricao,
+            segunda_abre, segunda_fecha, terca_abre, terca_fecha, quarta_abre, quarta_fecha,
+            quinta_abre, quinta_fecha, sexta_abre, sexta_fecha, sabado_abre, sabado_fecha,
+            domingo_abre, domingo_fecha
+        } = req.body;
+
+        // 2. Formata os dados que vêm de checkboxes
+        const especialidadesFormatado = Array.isArray(especialidades) ? especialidades.join(', ') : especialidades || '';
+        const pagamentosFormatado = Array.isArray(formas_pagamento) ? formas_pagamento.join(', ') : formas_pagamento || '';
+
+        // 3. Cria o objeto de horários manualmente, de forma segura
+        const horariosObjeto = {
+            segunda_abre, segunda_fecha, terca_abre, terca_fecha, quarta_abre, quarta_fecha,
+            quinta_abre, quinta_fecha, sexta_abre, sexta_fecha, sabado_abre, sabado_fecha,
+            domingo_abre, domingo_fecha
+        };
+        const horariosJSON = JSON.stringify(horariosObjeto);
+
+        // 4. Constrói a query UPDATE com todos os campos
         await db.query(
-            'UPDATE oficinas SET nome = ?, endereco = ? WHERE dono_id = ?',
-            [nome, endereco, dono_id]
+            `UPDATE oficinas SET 
+                nome = ?, cnpj = ?, telefone = ?, email = ?, nome_responsavel = ?,
+                cep = ?, logradouro = ?, numero = ?, complemento = ?, bairro = ?, cidade = ?, estado = ?,
+                website = ?, especialidades = ?, formas_pagamento = ?, descricao = ?, horario_funcionamento = ?
+            WHERE dono_id = ?`,
+            [
+                nome, cnpj, telefone, email, nome_responsavel,
+                cep, logradouro, numero, complemento, bairro, cidade, estado,
+                website, especialidadesFormatado, pagamentosFormatado, descricao, horariosJSON,
+                dono_id
+            ]
         );
-        res.json({ success: true, message: 'Informações da oficina atualizadas com sucesso!' });
+        
+        res.json({ success: true, message: 'Perfil da oficina atualizado com sucesso!' });
+
     } catch (error) {
         console.error("Erro ao atualizar oficina:", error);
         res.status(500).json({ success: false, message: 'Ocorreu um erro no servidor.' });
     }
 });
 
+app.post('/perfil/editar', async (req, res) => {
+    // Garante que o utilizador está logado
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: 'Acesso não autorizado.' });
+    }
+
+    try {
+        const userId = req.session.user.id;
+        const { nome_completo, cpf, telefone, cep, endereco, placa_veiculo, veiculo_marca, veiculo_modelo, veiculo_ano } = req.body;
+
+        // Validação básica
+        if (!nome_completo || !cpf) {
+            return res.status(400).json({ success: false, message: 'Nome e CPF são obrigatórios.' });
+        }
+
+        // Atualiza os dados na tabela 'clientes'
+        await db.query(
+            `UPDATE clientes SET 
+                nome_completo = ?, cpf = ?, telefone = ?, cep = ?, endereco = ?, 
+                placa_veiculo = ?, veiculo_marca = ?, veiculo_modelo = ?, veiculo_ano = ? 
+            WHERE id = ?`,
+            [nome_completo, cpf, telefone, cep, endereco, placa_veiculo, veiculo_marca, veiculo_modelo, veiculo_ano, userId]
+        );
+
+        // Atualiza o nome na sessão para que o header mude imediatamente
+        req.session.user.nome_completo = nome_completo;
+        
+        res.json({ success: true, message: 'Perfil atualizado com sucesso!' });
+
+    } catch (error) {
+        console.error("Erro ao atualizar perfil:", error);
+        res.status(500).json({ success: false, message: 'Ocorreu um erro no servidor.' });
+    }
+});
 
 // --- INICIAR SERVIDOR ---
 app.listen(PORT, () => {

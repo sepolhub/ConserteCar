@@ -1,29 +1,69 @@
+{{! views/perfil.hbs }}
 <main class="section-padding">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow-sm">
-                    <div class="card-body p-5">
-                        <h1 class="section-title text-dark">Meu Perfil</h1>
-                        <p class="lead">Olá, <strong>{{user.nome}}</strong>! Aqui você pode gerir as suas informações.</p>
-                        
-                        <hr class="my-4">
+                    <div class="card-header">
+                        <h3>Meu Perfil</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="profile-message"></div>
+                        <form id="form-editar-perfil">
+                            <h5 class="mt-2">Seus Dados Pessoais</h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nome_completo" class="form-label">Nome Completo</label>
+                                    <input type="text" class="form-control" name="nome_completo" value="{{user.nome_completo}}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" value="{{user.email}}" readonly>
+                                    <div class="form-text">O seu email não pode ser alterado.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cpf" class="form-label">CPF</label>
+                                    <input type="text" class="form-control" name="cpf" value="{{user.cpf}}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" name="telefone" value="{{user.telefone}}">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="cep" class="form-label">CEP</label>
+                                    <input type="text" class="form-control" name="cep" value="{{user.cep}}">
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" name="endereco" value="{{user.endereco}}">
+                                </div>
+                            </div>
 
-                        <form>
-                            <div class="mb-3">
-                                <label for="nome" class="form-label">Nome Completo</label>
-                                <input type="text" class="form-control" id="nome" value="{{user.nome}}">
+                            <h5 class="mt-4">Seu Veículo Principal</h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="placa_veiculo" class="form-label">Placa</label>
+                                    <input type="text" class="form-control" name="placa_veiculo" value="{{user.placa_veiculo}}">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="veiculo_marca" class="form-label">Marca</label>
+                                    <input type="text" class="form-control" name="veiculo_marca" value="{{user.veiculo_marca}}">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="veiculo_modelo" class="form-label">Modelo</label>
+                                    <input type="text" class="form-control" name="veiculo_modelo" value="{{user.veiculo_modelo}}">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="veiculo_ano" class="form-label">Ano</label>
+                                    <input type="number" class="form-control" name="veiculo_ano" value="{{user.veiculo_ano}}">
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" value="{{user.email}}" readonly>
-                                <div class="form-text">O seu email não pode ser alterado.</div>
+                            
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                             </div>
-                            <div class="mb-3">
-                                <label for="tipo" class="form-label">Tipo de Conta</label>
-                                <input type="text" class="form-control" id="tipo" value="{{user.tipo}}" readonly>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                         </form>
                     </div>
                 </div>

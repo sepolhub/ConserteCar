@@ -1,29 +1,59 @@
+{{! views/painel.hbs }}
 <main class="section-padding">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="section-title text-dark mb-0">Painel do Parceiro</h1>
+            <a href="/painel/editar" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-2"></i>Editar Informações
+            </a>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                <h3>Bem-vindo, {{user.nome}}!</h3>
-            </div>
-            <div class="card-body p-4">
-                {{#if oficina}}
-                    <h4>Informações da sua Oficina</h4>
-                    <hr>
-                    <p><strong>Nome:</strong> {{oficina.nome}}</p>
-                    <p><strong>Endereço:</strong> {{oficina.endereco}}</p>
-                    <p><strong>Avaliação Média:</strong> {{oficina.rating}} <i class="bi bi-star-fill text-warning"></i></p>
-                    
-                    <!-- Este é o botão atualizado -->
-                    <a href="/painel/editar" class="btn btn-primary mt-3">Editar Informações</a>
-                {{else}}
-                    <div class="alert alert-warning">
-                        A sua conta de parceiro ainda não está associada a nenhuma oficina. Por favor, entre em contacto com o nosso suporte.
+        {{#if oficina}}
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h3>Bem-vindo, {{user.nome}}!</h3>
+                    <p class="mb-0">Abaixo estão as informações públicas da sua oficina: <strong>{{oficina.nome}}</strong></p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5><i class="bi bi-person-rolodex me-2 text-primary"></i>Contato e Empresa</h5>
+                            <hr class="mt-2">
+                            <p><strong>Responsável:</strong> {{oficina.nome_responsavel}}</p>
+                            <p><strong>CNPJ:</strong> {{oficina.cnpj}}</p>
+                            <p><strong>Telefone:</strong> {{oficina.telefone}}</p>
+                            <p><strong>Email:</strong> {{oficina.email}}</p>
+                            <p><strong>Website:</strong> {{#if oficina.website}}<a href="{{oficina.website}}" target="_blank">{{oficina.website}}</a>{{else}}Não informado{{/if}}</p>
+
+                            <h5 class="mt-4"><i class="bi bi-geo-alt-fill me-2 text-primary"></i>Endereço</h5>
+                            <hr class="mt-2">
+                            <p>{{oficina.logradouro}}, {{oficina.numero}} {{#if oficina.complemento}} - {{oficina.complemento}}{{/if}}</p>
+                            <p>{{oficina.bairro}} - {{oficina.cidade}}, {{oficina.estado}}</p>
+                            <p>CEP: {{oficina.cep}}</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5><i class="bi bi-card-checklist me-2 text-primary"></i>Serviços e Detalhes</h5>
+                            <hr class="mt-2">
+                            <p><strong>Especialidades:</strong> {{oficina.especialidades}}</p>
+                            <p><strong>Formas de Pagamento:</strong> {{oficina.formas_pagamento}}</p>
+                            <p><strong>Avaliação Média:</strong> {{#if oficina.rating}}{{oficina.rating}} <i class="bi bi-star-fill text-warning"></i>{{else}}Ainda sem avaliações{{/if}}</p>
+                            
+                            <h5 class="mt-4"><i class="bi bi-clock-history me-2 text-primary"></i>Horário de Funcionamento</h5>
+                            <hr class="mt-2">
+                            <div id="horario-display" data-horarios="{{{oficina.horario_funcionamento}}}"></div>
+
+                            <h5 class="mt-4"><i class="bi bi-info-circle-fill me-2 text-primary"></i>Descrição</h5>
+                            <hr class="mt-2">
+                            <p class="text-muted">{{oficina.descricao}}</p>
+                        </div>
                     </div>
-                {{/if}}
+                </div>
             </div>
-        </div>
+        {{else}}
+            <div class="alert alert-warning">
+                A sua conta de parceiro ainda não está associada a nenhuma oficina. Por favor, entre em contacto com o nosso suporte.
+            </div>
+        {{/if}}
     </div>
 </main>

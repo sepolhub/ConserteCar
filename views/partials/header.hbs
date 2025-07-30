@@ -10,13 +10,12 @@
                 {{#if isLoggedIn}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Olá, {{user.nome}}
+                            {{user.nome}}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown">
                             
                             {{#if user.isPartner}}
                                 <li><a class="dropdown-item" href="/painel">Meu Painel</a></li>
-                                <li><a class="dropdown-item" href="/painel/editar">Editar Perfil da Oficina</a></li>
                             {{else}}
                                 <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
                                 <li><a class="dropdown-item" href="/meus-agendamentos">Meus Agendamentos</a></li>

@@ -88,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Oficina com dados inválidos foi ignorada:", oficina);
                     return;
                 }
-
-                // A lógica para criar o HTML das estrelas e da distância precisa estar ANTES
-                // de ser usada no pop-up e no card.
+                
                 let ratingHtml = '';
                 const ratingNum = parseFloat(oficina.rating);
                 if (!isNaN(ratingNum)) {
@@ -106,11 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let distanciaHtml = oficina.distancia ? `<span class="text-muted small">${oficina.distancia.toFixed(1)} km</span>` : '';
                 
-                // ##### INÍCIO DA ALTERAÇÃO #####
                 const pontoOficina = [oficina.lat, oficina.lon];
                 pontosParaZoom.push(pontoOficina);
 
-                // 1. Construir o HTML para o conteúdo do pop-up
                 let popupContent = `
                     <div style="font-family: 'Roboto', sans-serif; min-width: 180px;">
                         <h6 class="mb-1" style="font-weight: 700;">${oficina.nome}</h6>
@@ -122,11 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                // 2. Criar o marcador e associar o novo pop-up
                 const marker = L.marker(pontoOficina, { icon: workshopIcon })
                     .addTo(mapa)
                     .bindPopup(popupContent);
-                // ##### FIM DA ALTERAÇÃO #####
                 
                 marker.oficinaId = oficina.id;
                 markers[oficina.id] = marker;
@@ -142,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const cardHtml = `
                     <div class="result-card" data-id="${oficina.id}">
-                        <img src="${oficina.imagem_url || '/images/placeholder.png'}" alt="${oficina.nome}" class="result-card-img">
+                        <img src="${oficina.img || '/images/placeholder.png'}" alt="${oficina.nome}" class="result-card-img">
                         <div class="result-card-body">
                             <h6 class="mb-1">${oficina.nome}</h6>
                             <div class="rating-stars small mb-1" title="Avaliação: ${oficina.rating || 'N/A'} de 5">
@@ -164,15 +158,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkboxesFiltro = document.querySelectorAll('#filtros-servicos input[type="checkbox"]');
 
         function atualizarResultados() {
-            let oficinasFiltradas = [...oficinasMasterList];
-            const filtrosSelecionados = Array.from(checkboxesFiltro).filter(i => i.checked).map(i => i.value);
-            if (filtrosSelecionados.length > 0) {
-                oficinasFiltradas = oficinasFiltradas.filter(oficina => Array.isArray(oficina.servicos) && oficina.servicos.some(servico => filtrosSelecionados.includes(servico)));
-            }
-            if (sortBySelect && sortBySelect.value === 'avaliacao') {
-                oficinasFiltradas.sort((a, b) => b.rating - a.rating);
-            }
-            renderizarOficinas(oficinasFiltradas);
+            const filtrosSelecionados = Array.from(checkboxesFiltro)
+                .filter(i => i.checked)
+                .map(i => i.value);
+            
+            const ordenacao = sortBySelect ? sortBySelect.value : 'distancia';
+            const latLng = userMarker ? userMarker.getLatLng() : null;
+
+            iniciarPagina({
+                lat: latLng ? latLng.lat : null,
+                lon: latLng ? latLng.lng : null,
+                servicos: filtrosSelecionados,
+                ordenarPor: ordenacao
+            });
         }
 
         if (checkboxesFiltro.length > 0) checkboxesFiltro.forEach(checkbox => checkbox.addEventListener('change', atualizarResultados));
@@ -189,13 +187,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        async function iniciarPagina(lat, lon) {
+        async function iniciarPagina(filtros = {}) {
             try {
-                const apiUrl = (lat && lon) ? `/api/oficinas?lat=${lat}&lon=${lon}` : '/api/oficinas';
+                const params = new URLSearchParams();
+                if (filtros.lat && filtros.lon) {
+                    params.append('lat', filtros.lat);
+                    params.append('lon', filtros.lon);
+                }
+                if (filtros.servicos && filtros.servicos.length > 0) {
+                    params.append('servicos', filtros.servicos.join(','));
+                }
+                if (filtros.ordenarPor) {
+                    params.append('ordenarPor', filtros.ordenarPor);
+                }
+                const apiUrl = `/api/oficinas?${params.toString()}`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error('Falha ao carregar dados.');
-                oficinasMasterList = await response.json();
-                atualizarResultados();
+                
+                const oficinas = await response.json();
+                renderizarOficinas(oficinas);
+
             } catch (error) {
                 console.error("Erro ao iniciar:", error);
                 document.getElementById('lista-resultados').innerHTML = `<div class="alert alert-danger">Erro ao carregar oficinas.</div>`;
@@ -205,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const coordenadasDeTeste = [-23.2028, -47.2881]; 
         userMarker = L.marker(coordenadasDeTeste, { icon: userIcon }).addTo(mapa).bindPopup('<b>Você está aqui (Simulado)</b>').openPopup();
         mapa.setView(coordenadasDeTeste, 14);
-        iniciarPagina(coordenadasDeTeste[0], coordenadasDeTeste[1]);
+        iniciarPagina({ lat: coordenadasDeTeste[0], lon: coordenadasDeTeste[1] });
     }
 
     // --- LÓGICA DO FORMULÁRIO DE CADASTRO ---
@@ -273,55 +284,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DINÂMICA PARA O FORMULÁRIO DE HORÁRIO ---
-    const secaoHorarios = document.querySelectorAll('.horario-dia');
-    if (secaoHorarios.length > 0) {
-        secaoHorarios.forEach(dia => {
-            const checkbox = dia.querySelector('.dia-checkbox');
-            const timeInputs = dia.querySelectorAll('.hora-input');
-
-            checkbox.addEventListener('change', () => {
-                timeInputs.forEach(input => {
-                    input.disabled = !checkbox.checked;
-                    if (!checkbox.checked) {
-                        input.value = '';
-                    }
-                });
-            });
-        });
-    }
-    
-    // --- LÓGICA PARA O FORMULÁRIO DE EDIÇÃO DA OFICINA ---
-    const formEditarOficina = document.getElementById('form-editar-oficina');
-    if (formEditarOficina) {
-        formEditarOficina.addEventListener('submit', async (event) => {
+    // --- LÓGICA PARA O FORMULÁRIO DE EDIÇÃO DE PERFIL DO CLIENTE ---
+    const formEditarPerfil = document.getElementById('form-editar-perfil');
+    if (formEditarPerfil) {
+        formEditarPerfil.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const editMessage = document.getElementById('edit-message');
-            const formData = new FormData(formEditarOficina);
+            const profileMessage = document.getElementById('profile-message');
+            const formData = new FormData(formEditarPerfil);
             const data = Object.fromEntries(formData.entries());
-            editMessage.innerHTML = '';
-
+            profileMessage.innerHTML = '';
             try {
-                const response = await fetch('/painel/editar', {
+                const response = await fetch('/perfil/editar', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data),
                 });
                 const result = await response.json();
-
                 if (result.success) {
-                    editMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                    setTimeout(() => {
-                        window.location.href = '/painel';
-                    }, 2000);
+                    profileMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                    const userNameInHeader = document.querySelector('#navbarDropdown');
+                    if (userNameInHeader) {
+                        userNameInHeader.innerText = `Olá, ${data.nome_completo}`;
+                    }
                 } else {
-                    editMessage.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                    throw new Error(result.message);
                 }
             } catch (error) {
-                console.error('Erro ao atualizar oficina:', error);
-                editMessage.innerHTML = `<div class="alert alert-danger">Ocorreu um erro. Tente novamente.</div>`;
+                profileMessage.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
             }
         });
     }
@@ -329,25 +318,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LÓGICA DO FORMULÁRIO DE APLICAÇÃO DE PARCEIRO ---
     const formAplicarParceiro = document.getElementById('form-aplicar-parceiro');
     if (formAplicarParceiro) {
+        // Lógica de validação do formulário
         formAplicarParceiro.addEventListener('submit', async (event) => {
             event.preventDefault();
             const formMessage = document.getElementById('form-message');
             formMessage.innerHTML = '';
-
             let isValid = true;
             let errorMessage = '';
-
             const especialidadesChecked = formAplicarParceiro.querySelectorAll('input[name="especialidades"]:checked');
             if (especialidadesChecked.length === 0) {
                 isValid = false;
                 errorMessage += '<p>Por favor, selecione pelo menos uma especialidade.</p>';
             }
-
             const diasChecked = formAplicarParceiro.querySelectorAll('.dia-checkbox:checked');
-            if (diasChecked.length === 0) {
-                isValid = false;
-                errorMessage += '<p>Por favor, defina o horário para pelo menos um dia da semana.</p>';
-            } else {
+            if (diasChecked.length > 0) {
                 diasChecked.forEach(diaCheckbox => {
                     const diaRow = diaCheckbox.closest('.horario-dia');
                     const abreInput = diaRow.querySelector('input[name*="_abre"]');
@@ -358,15 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
-
             if (!isValid) {
                 formMessage.innerHTML = `<div class="alert alert-danger">${errorMessage}</div>`;
                 return;
             }
-
             const formData = new FormData(formAplicarParceiro);
             const data = Object.fromEntries(formData.entries());
-
             try {
                 const response = await fetch('/quero-ser-parceiro', {
                     method: 'POST',
@@ -374,11 +355,148 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                 window.location.href = '/aguarde-aprovacao';
+                if (result.success) {
+                    window.location.href = '/aguarde-aprovacao';
+                } else {
+                    throw new Error(result.message);
+                }
             } catch (error) {
                 formMessage.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
             }
         });
+
+        // Lógica dinâmica para os horários (na página de aplicação)
+        const secaoHorariosAplicacao = formAplicarParceiro.querySelectorAll('.horario-dia');
+        secaoHorariosAplicacao.forEach(dia => {
+            const checkbox = dia.querySelector('.dia-checkbox');
+            const timeInputs = dia.querySelectorAll('.hora-input');
+            checkbox.addEventListener('change', () => {
+                timeInputs.forEach(input => {
+                    input.disabled = !checkbox.checked;
+                    if (!checkbox.checked) {
+                        input.value = '';
+                    }
+                });
+            });
+        });
     }
+
+    // --- LÓGICA PARA PÁGINA DE EDIÇÃO DE OFICINA ---
+    const formEditarOficina = document.getElementById('form-editar-oficina');
+    if (formEditarOficina) {
+        // Lógica para preencher o formulário com dados existentes
+        if (typeof oficinaData !== 'undefined') {
+            const todasEspecialidades = ['Mecânica Geral', 'Elétrica', 'Funilaria e Pintura', 'Borracharia'];
+            const todasFormasPagamento = ['Cartão de Crédito', 'PIX', 'Dinheiro'];
+            const horariosSalvos = JSON.parse(oficinaData.horario_funcionamento || '{}');
+            const especialidadesSalvas = oficinaData.especialidades ? oficinaData.especialidades.split(', ') : [];
+            const pagamentosSalvos = oficinaData.formas_pagamento ? oficinaData.formas_pagamento.split(', ') : [];
+            
+            const secaoEspecialidades = document.getElementById('secao-especialidades-edicao');
+            if(secaoEspecialidades) {
+                todasEspecialidades.forEach(esp => {
+                    const isChecked = especialidadesSalvas.includes(esp);
+                    const id = `esp-${esp.replace(/[^a-zA-Z0-9]/g, '')}`;
+                    secaoEspecialidades.innerHTML += `
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="especialidades" value="${esp}" id="${id}" ${isChecked ? 'checked' : ''}>
+                            <label class="form-check-label" for="${id}">${esp}</label>
+                        </div>
+                    `;
+                });
+            }
+
+            const secaoPagamentos = document.getElementById('secao-pagamentos-edicao');
+            if(secaoPagamentos) {
+                todasFormasPagamento.forEach(pag => {
+                    const isChecked = pagamentosSalvos.includes(pag);
+                    const id = `pag-${pag.replace(/[^a-zA-Z0-9]/g, '')}`;
+                    secaoPagamentos.innerHTML += `
+                        <div class="form-check me-3 d-inline-block">
+                            <input class="form-check-input" type="checkbox" name="formas_pagamento" value="${pag}" id="${id}" ${isChecked ? 'checked' : ''}>
+                            <label class="form-check-label" for="${id}">${pag}</label>
+                        </div>
+                    `;
+                });
+            }
+
+            const secaoHorariosEdicao = document.getElementById('secao-horarios-edicao');
+            if(secaoHorariosEdicao) {
+                const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+                const diasLabel = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
+                dias.forEach((dia, index) => {
+                    const abre = horariosSalvos[`${dia}_abre`] || '';
+                    const fecha = horariosSalvos[`${dia}_fecha`] || '';
+                    const isChecked = !!(abre && fecha);
+                    secaoHorariosEdicao.innerHTML += `
+                        <div class="row align-items-center mb-2 horario-dia">
+                            <div class="col-lg-3 col-md-4 col-5">
+                                <div class="form-check">
+                                    <input class="form-check-input dia-checkbox" type="checkbox" name="${dia}_check" value="${diasLabel[index]}" id="${dia}" ${isChecked ? 'checked' : ''}>
+                                    <label class="form-check-label" for="${dia}">${diasLabel[index]}</label>
+                                </div>
+                            </div>
+                            <div class="col"><input type="time" class="form-control hora-input" name="${dia}_abre" value="${abre}" ${!isChecked ? 'disabled' : ''}></div>
+                            <div class="col-auto text-center">às</div>
+                            <div class="col"><input type="time" class="form-control hora-input" name="${dia}_fecha" value="${fecha}" ${!isChecked ? 'disabled' : ''}></div>
+                        </div>
+                    `;
+                });
+            
+                const secaoHorarios = secaoHorariosEdicao.querySelectorAll('.horario-dia');
+                secaoHorarios.forEach(dia => {
+                    const checkbox = dia.querySelector('.dia-checkbox');
+                    const timeInputs = dia.querySelectorAll('.hora-input');
+                    checkbox.addEventListener('change', () => {
+                        timeInputs.forEach(input => {
+                            input.disabled = !checkbox.checked;
+                            if (!checkbox.checked) input.value = '';
+                        });
+                    });
+                });
+            }
+        }
+        
+        // Lógica de SUBMIT do formulário de edição
+        formEditarOficina.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const editMessage = document.getElementById('edit-message');
+            const formData = new FormData(formEditarOficina);
+            const data = Object.fromEntries(formData.entries());
+            editMessage.innerHTML = '';
+            try {
+                const response = await fetch('/painel/editar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    editMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                editMessage.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        });
+    }
+
+    
+    // LÓGICA PARA EXIBIR O HORÁRIO DE FUNCIONAMENTO NO PAINEL
+    const horarioDisplay = document.getElementById('horario-display');
+if (horarioDisplay) {
+    const horariosData = horarioDisplay.getAttribute('data-horarios');
+    
+    // MODO DE DEPURAÇÃO: Mostra os dados brutos diretamente na página
+    if (horariosData) {
+        horarioDisplay.innerHTML = `
+            <p><strong>Dados Brutos Recebidos (para depuração):</strong></p>
+            <pre style="background-color: #eee; border: 1px solid #ccc; padding: 10px; white-space: pre-wrap; word-wrap: break-word;">${horariosData}</pre>
+        `;
+    } else {
+        horarioDisplay.innerHTML = '<p class="text-info">Atributo data-horarios não foi encontrado ou está vazio.</p>';
+    }
+}
     
 });
